@@ -3,6 +3,15 @@
 #include "PluginProcessor.hpp"
 #include "Slider.hpp"
 #include "EffectBox.hpp"
+#include <vector>
+
+enum EffectIndex {
+    REVERB,
+    DISTORTION,
+    DELAY,
+    CHORUS,
+    EQ
+};
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor
@@ -22,11 +31,8 @@ private:
     // access the processor object that created it.
     AudioPluginAudioProcessor& processorRef;
 
-    EffectBox reverb;
-    EffectBox distortion;
-    EffectBox delay;
-    EffectBox chorus;
-    EffectBox eq;
+    std::vector<EffectBox> selectEffectBox;
+    std::vector<EffectBox> chainEffectBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

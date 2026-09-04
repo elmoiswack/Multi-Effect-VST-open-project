@@ -19,16 +19,22 @@ EffectBox::~EffectBox() {
 }
 
 EffectBox::EffectBox(EffectBox&& other) noexcept {
+    this->effectName = std::move(other.effectName);
+
+    this->color[0] = other.color[0];
+    this->color[1] = other.color[1];
+    this->color[2] = other.color[2];
+
     other.effectName = "";
     other.color[0] = 0;
-	other.color[1] = 0;
-	other.color[2] = 0;
+    other.color[1] = 0;
+    other.color[2] = 0;
 }
 
 EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
 {
     if (this != &other) {
-    	this->effectName = other.effectName;
+    	this->effectName = std::move(other.effectName);
 		this->color[0] = other.color[0];
 		this->color[1] = other.color[1];
 		this->color[2] = other.color[2];
