@@ -1,0 +1,57 @@
+#include "EffectBox.hpp"
+
+EffectBox::EffectBox() {
+	this->effectName = "";
+	this->color[0] = 0;
+	this->color[1] = 0;
+	this->color[2] = 0;
+}
+
+EffectBox::EffectBox(juce::String name, juce::uint8* colorRGB) {
+	this->effectName = name;
+	this->color[0] = colorRGB[0];
+	this->color[1] = colorRGB[1];
+	this->color[2] = colorRGB[2];
+}
+
+EffectBox::~EffectBox() {
+
+}
+
+EffectBox::EffectBox(EffectBox&& other) noexcept {
+    other.effectName = "";
+    other.color[0] = 0;
+	other.color[1] = 0;
+	other.color[2] = 0;
+}
+
+EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
+{
+    if (this != &other) {
+    	this->effectName = other.effectName;
+		this->color[0] = other.color[0];
+		this->color[1] = other.color[1];
+		this->color[2] = other.color[2];
+    }
+    return *this;
+}
+
+
+void EffectBox::paint(juce::Graphics& g) {
+	float cornerSize = 20.f;
+
+	g.setColour(juce::Colour::fromRGB(58, 58, 58));
+	g.fillRoundedRectangle(getLocalBounds().toFloat(), cornerSize);
+	g.drawRoundedRectangle(getLocalBounds().toFloat(), cornerSize, 5.0f);
+
+	g.setColour(juce::Colour::fromRGB(this->color[0], this->color[1], this->color[2]));
+	// juce::FontOptions font("FreeSans", 40.0f, juce::Font::bold);
+	// std::cout << font.getTypeface() << std::endl;
+	g.setFont(30.f);
+	g.drawText(this->effectName, getLocalBounds(), juce::Justification::centred);
+}
+
+void EffectBox::resized() {
+
+}
+
