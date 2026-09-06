@@ -7,7 +7,7 @@ private:
 	juce::uint8 color[3];
 public:
 	EffectBox();
-	EffectBox(juce::String name, juce::uint8* colorRGB);
+	EffectBox(juce::String name, const juce::uint8* colorRGB);
 	EffectBox(EffectBox&& other) noexcept;
 	EffectBox& operator=(EffectBox&& other) noexcept;
 	~EffectBox() override; 

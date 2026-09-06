@@ -13,6 +13,14 @@ enum EffectIndex {
     EQ
 };
 
+struct ColorsScheme {
+    inline static constexpr juce::uint8 reverbPrimary[3] = {255, 255, 100};
+    inline static constexpr juce::uint8 distortionPrimary[3] = {158, 27, 0};
+    inline static constexpr juce::uint8 delayPrimary[3] = {11, 150, 71};
+    inline static constexpr juce::uint8 chorusPrimary[3] = {101, 6, 126};
+    inline static constexpr juce::uint8 eqPrimary[3] = {255, 255, 255};
+};
+
 //==============================================================================
 class AudioPluginAudioProcessorEditor final : public juce::AudioProcessorEditor
 {

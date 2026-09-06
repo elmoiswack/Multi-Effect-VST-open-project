@@ -7,7 +7,7 @@ EffectBox::EffectBox() {
 	this->color[2] = 0;
 }
 
-EffectBox::EffectBox(juce::String name, juce::uint8* colorRGB) {
+EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB) {
 	this->effectName = name;
 	this->color[0] = colorRGB[0];
 	this->color[1] = colorRGB[1];
