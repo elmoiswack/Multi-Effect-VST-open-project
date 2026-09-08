@@ -7,11 +7,12 @@ EffectBox::EffectBox() {
 	this->color[2] = 0;
 }
 
-EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB) {
+EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxType typeBox) {
 	this->effectName = name;
 	this->color[0] = colorRGB[0];
 	this->color[1] = colorRGB[1];
 	this->color[2] = colorRGB[2];
+	this->type = typeBox;
 }
 
 EffectBox::~EffectBox() {
@@ -45,6 +46,8 @@ EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
 
 void EffectBox::paint(juce::Graphics& g) {
 	float cornerSize = 20.f;
+	auto width = getWidth();
+	auto height = getHeight();
 
 	g.setColour(juce::Colour::fromRGB(58, 58, 58));
 	g.fillRoundedRectangle(getLocalBounds().toFloat(), cornerSize);
@@ -55,6 +58,9 @@ void EffectBox::paint(juce::Graphics& g) {
 	// std::cout << font.getTypeface() << std::endl;
 	g.setFont(30.f);
 	g.drawText(this->effectName, getLocalBounds(), juce::Justification::centred);
+
+	g.setColour(juce::Colours::white);
+	
 }
 
 void EffectBox::resized() {

@@ -9,6 +9,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 
     this->selectEffectBox.reserve(5);
     this->chainEffectBox.reserve(5);
+    this->activeChain.reserve(5);
     initEffectBoxes();
 
     setSize(1000, 800);
@@ -17,31 +18,40 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
 {
+    for (auto it = this->selectEffectBox.begin(); it < this->selectEffectBox.end(); it++) {
+        this->selectEffectBox.erase(it);
+    }
+    for (auto it = this->chainEffectBox.begin(); it < this->chainEffectBox.end(); it++) {
+        this->chainEffectBox.erase(it);
+    }
+    for (auto it = this->activeChain.begin(); it < this->activeChain.end(); it++) {
+        this->activeChain.erase(it);
+    }
 }
 
 void AudioPluginAudioProcessorEditor::initEffectBoxes() {
-    this->selectEffectBox.push_back(EffectBox("Reverb", ColorsScheme::reverbPrimary));
-    this->chainEffectBox.push_back(EffectBox("Reverb", ColorsScheme::reverbPrimary));
+    this->selectEffectBox.push_back(EffectBox("Reverb", ColorsScheme::reverbPrimary, EffectBoxType::SELECTOR));
+    this->chainEffectBox.push_back(EffectBox("Reverb", ColorsScheme::reverbPrimary, EffectBoxType::CHAIN));
     addAndMakeVisible(this->selectEffectBox[EffectIndex::REVERB]);
     addAndMakeVisible(this->chainEffectBox[EffectIndex::REVERB]);
 
-    this->selectEffectBox.push_back(EffectBox("Distortion", ColorsScheme::distortionPrimary));
-    this->chainEffectBox.push_back(EffectBox("Distortion", ColorsScheme::distortionPrimary));
+    this->selectEffectBox.push_back(EffectBox("Distortion", ColorsScheme::distortionPrimary, EffectBoxType::SELECTOR));
+    this->chainEffectBox.push_back(EffectBox("Distortion", ColorsScheme::distortionPrimary, EffectBoxType::CHAIN));
     addAndMakeVisible(this->selectEffectBox[EffectIndex::DISTORTION]);
     addAndMakeVisible(this->chainEffectBox[EffectIndex::DISTORTION]);
 
-    this->selectEffectBox.push_back(EffectBox("Delay", ColorsScheme::delayPrimary));
-    this->chainEffectBox.push_back(EffectBox("Delay", ColorsScheme::delayPrimary));
+    this->selectEffectBox.push_back(EffectBox("Delay", ColorsScheme::delayPrimary, EffectBoxType::SELECTOR));
+    this->chainEffectBox.push_back(EffectBox("Delay", ColorsScheme::delayPrimary, EffectBoxType::CHAIN));
     addAndMakeVisible(this->selectEffectBox[EffectIndex::DELAY]);
     addAndMakeVisible(this->chainEffectBox[EffectIndex::DELAY]);
     
-    this->selectEffectBox.push_back(EffectBox("Chorus", ColorsScheme::chorusPrimary));
-    this->chainEffectBox.push_back(EffectBox("Chorus", ColorsScheme::chorusPrimary));
+    this->selectEffectBox.push_back(EffectBox("Chorus", ColorsScheme::chorusPrimary, EffectBoxType::SELECTOR));
+    this->chainEffectBox.push_back(EffectBox("Chorus", ColorsScheme::chorusPrimary, EffectBoxType::CHAIN));
     addAndMakeVisible(this->selectEffectBox[EffectIndex::CHORUS]);
     addAndMakeVisible(this->chainEffectBox[EffectIndex::CHORUS]);
 
-    this->selectEffectBox.push_back(EffectBox("EQ", ColorsScheme::eqPrimary));
-    this->chainEffectBox.push_back(EffectBox("EQ", ColorsScheme::eqPrimary));
+    this->selectEffectBox.push_back(EffectBox("EQ", ColorsScheme::eqPrimary, EffectBoxType::SELECTOR));
+    this->chainEffectBox.push_back(EffectBox("EQ", ColorsScheme::eqPrimary, EffectBoxType::CHAIN));
     addAndMakeVisible(this->selectEffectBox[EffectIndex::EQ]);
     addAndMakeVisible(this->chainEffectBox[EffectIndex::EQ]);
 }
