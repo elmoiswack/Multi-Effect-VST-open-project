@@ -1,3 +1,4 @@
+#include "BinaryData.h"
 #include <juce_gui_basics/juce_gui_basics.h>
 
 enum EffectBoxType {
@@ -11,6 +12,7 @@ private:
 	juce::String effectName;
 	juce::uint8 color[3];
 	EffectBoxType type;
+	std::unique_ptr<juce::Drawable> xIcon;
 
 public:
 	EffectBox();
@@ -21,5 +23,6 @@ public:
 
     void paint(juce::Graphics& g) override;
     void resized() override;
+
 };
 

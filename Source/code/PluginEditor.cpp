@@ -60,12 +60,12 @@ void AudioPluginAudioProcessorEditor::initEffectBoxes() {
 void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g) {
     g.fillAll(juce::Colour::fromRGB(35, 35, 35));
 
-    float startX = 197.5;
+    float startX = 200;
     g.setColour(juce::Colours::white);
+    juce::Path seperatorChain;
     for (std::size_t i = 0; i < (this->chainEffectBox.size() - 1); i++) {
-        juce::Path seperatorChainSelector;
-        seperatorChainSelector.addRectangle(startX + (i * 200), 20, 5, 60);    
-        g.fillPath(seperatorChainSelector);
+        seperatorChain.addRectangle(startX + (i * 200), 20, 5, 60);    
+        g.fillPath(seperatorChain);
     }
 
     juce::Path seperatorChainSelector;
@@ -112,9 +112,9 @@ void AudioPluginAudioProcessorEditor::resized() {
         heigthBox);
 
     int spacing = 200;
-    int startX = 10;
+    int startX = 15;
     int chainBoxY = 10;
-    int chainBoxWidth = 180;
+    int chainBoxWidth = 170;
     int chainBoxHeight = 80;
 
     for (std::size_t i = 0; i < this->chainEffectBox.size(); i++) {

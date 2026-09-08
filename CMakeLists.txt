@@ -49,9 +49,6 @@ juce_add_plugin(${PROJECT_NAME}
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
-target_sources(${PROJECT_NAME} PRIVATE
-    ${PLUGIN_SOURCES}
-)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
@@ -63,6 +60,20 @@ target_compile_definitions(${PROJECT_NAME}
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
+)
+
+juce_add_binary_data(BinaryData
+    SOURCES
+        assets/images/x.svg
+)
+
+target_include_directories(BinaryData
+    PUBLIC
+        "${CMAKE_CURRENT_BINARY_DIR}/juce_binarydata_BinaryData/JuceLibraryCode"
+)
+
+target_sources(${PROJECT_NAME} PRIVATE
+    ${PLUGIN_SOURCES}
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -81,5 +92,6 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags
-)
 
+        BinaryData
+)
