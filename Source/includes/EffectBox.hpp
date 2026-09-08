@@ -13,6 +13,7 @@ private:
 	juce::uint8 color[3];
 	EffectBoxType type;
 	std::unique_ptr<juce::Drawable> xIcon;
+	juce::DrawableButton drawableIcon;
 
 public:
 	EffectBox();

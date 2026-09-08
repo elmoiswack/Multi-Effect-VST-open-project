@@ -1,9 +1,6 @@
 #include "EffectBox.hpp"
 
-EffectBox::EffectBox()
-    //: xIcon(juce::ImageCache::getFromMemory(
-    //      BinaryData::x_png,
-    //      BinaryData::x_pngSize))
+EffectBox::EffectBox() : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted), xIcon(nullptr)
 {
     effectName = "";
     color[0] = 0;
@@ -11,23 +8,30 @@ EffectBox::EffectBox()
     color[2] = 0;
 }
 
-EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxType typeBox) {
+EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxType typeBox) : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted) {
 	this->effectName = name;
 	this->color[0] = colorRGB[0];
 	this->color[1] = colorRGB[1];
 	this->color[2] = colorRGB[2];
 	this->type = typeBox;
-	//this->xIcon = juce::ImageCache::getFromMemory(BinaryData::x_png, BinaryData::x_pngSize);
-	this->xIcon = juce::Drawable::createFromImageData(
-    BinaryData::x_svg,
-    BinaryData::x_svgSize);
+
+	if (typeBox == EffectBoxType::CHAIN) {
+		this->xIcon = juce::Drawable::createFromImageData(
+		BinaryData::x_svg,
+		BinaryData::x_svgSize);
+		this->drawableIcon.setImages(this->xIcon.get());
+		addAndMakeVisible(this->drawableIcon);
+	}
+	else {
+		this->xIcon = nullptr;
+	}
 }
 
 EffectBox::~EffectBox() {
 
 }
 
-EffectBox::EffectBox(EffectBox&& other) noexcept {
+EffectBox::EffectBox(EffectBox&& other) noexcept : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted) {
     this->effectName = std::move(other.effectName);
 	this->xIcon = std::move(other.xIcon);
     this->color[0] = other.color[0];
@@ -39,6 +43,7 @@ EffectBox::EffectBox(EffectBox&& other) noexcept {
     other.color[0] = 0;
     other.color[1] = 0;
     other.color[2] = 0;
+	addAndMakeVisible(this->drawableIcon);
 }
 
 EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
@@ -50,6 +55,7 @@ EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
 		this->color[2] = other.color[2];
 		this->type = other.type;
 		this->xIcon = std::move(other.xIcon);
+		addAndMakeVisible(this->drawableIcon);
     }
     return *this;
 }
@@ -57,9 +63,6 @@ EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
 
 void EffectBox::paint(juce::Graphics& g) {
 	float cornerSize = 20.f;
-	auto width = (float)getWidth();
-	float svgHeight = 10.0f;
-	float svgWidth = 10.0f;
 
 	g.setColour(juce::Colour::fromRGB(58, 58, 58));
 	g.fillRoundedRectangle(getLocalBounds().toFloat(), cornerSize);
@@ -70,19 +73,15 @@ void EffectBox::paint(juce::Graphics& g) {
 	// std::cout << font.getTypeface() << std::endl;
 	g.setFont(30.f);
 	g.drawText(this->effectName, getLocalBounds(), juce::Justification::centred);
-
-	if (this->type == EffectBoxType::CHAIN) {
-		this->xIcon->drawWithin(
-			g,
-			juce::Rectangle<float>(width - (svgWidth * 2), svgHeight, svgWidth, svgHeight),
-			juce::RectanglePlacement::centred,
-			1.0f
-		);
-	}
-	
 }
 
 void EffectBox::resized() {
+	auto width = (float)getWidth();
+	float svgHeight = 10.0f;
+	float svgWidth = 10.0f;
 
+	if (this->type == EffectBoxType::CHAIN) {
+		this->drawableIcon.setBounds(width - (svgWidth * 2), svgHeight, svgWidth, svgHeight);
+	}
 }
 
