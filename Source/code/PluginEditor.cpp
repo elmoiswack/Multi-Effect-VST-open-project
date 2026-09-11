@@ -16,44 +16,40 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     resized();
 }
 
-AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor()
-{
-    for (auto it = this->selectEffectBox.begin(); it < this->selectEffectBox.end(); it++) {
-        this->selectEffectBox.erase(it);
-    }
-    for (auto it = this->chainEffectBox.begin(); it < this->chainEffectBox.end(); it++) {
-        this->chainEffectBox.erase(it);
-    }
-    for (auto it = this->activeChain.begin(); it < this->activeChain.end(); it++) {
-        this->activeChain.erase(it);
-    }
+AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
+
 }
 
 void AudioPluginAudioProcessorEditor::initEffectBoxes() {
-    this->selectEffectBox.push_back(EffectBox("Reverb", ColorsScheme::reverbPrimary, EffectBoxType::SELECTOR));
-    this->chainEffectBox.push_back(EffectBox("Reverb", ColorsScheme::reverbPrimary, EffectBoxType::CHAIN));
-    addAndMakeVisible(this->selectEffectBox[EffectIndex::REVERB]);
-    addAndMakeVisible(this->chainEffectBox[EffectIndex::REVERB]);
+    this->initEffectObject("Reverb", ColorsScheme::reverbPrimary, EffectIndex::REVERB);
+    this->initEffectObject("Distortion", ColorsScheme::distortionPrimary, EffectIndex::DISTORTION);
+    this->initEffectObject("Delay", ColorsScheme::delayPrimary, EffectIndex::DELAY);
+    this->initEffectObject("Chorus", ColorsScheme::chorusPrimary, EffectIndex::CHORUS);
+    this->initEffectObject("EQ", ColorsScheme::eqPrimary, EffectIndex::EQ);
+}
 
-    this->selectEffectBox.push_back(EffectBox("Distortion", ColorsScheme::distortionPrimary, EffectBoxType::SELECTOR));
-    this->chainEffectBox.push_back(EffectBox("Distortion", ColorsScheme::distortionPrimary, EffectBoxType::CHAIN));
-    addAndMakeVisible(this->selectEffectBox[EffectIndex::DISTORTION]);
-    addAndMakeVisible(this->chainEffectBox[EffectIndex::DISTORTION]);
-
-    this->selectEffectBox.push_back(EffectBox("Delay", ColorsScheme::delayPrimary, EffectBoxType::SELECTOR));
-    this->chainEffectBox.push_back(EffectBox("Delay", ColorsScheme::delayPrimary, EffectBoxType::CHAIN));
-    addAndMakeVisible(this->selectEffectBox[EffectIndex::DELAY]);
-    addAndMakeVisible(this->chainEffectBox[EffectIndex::DELAY]);
+void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const juce::uint8* color, EffectIndex index) {
+    auto& objectSelector = this->selectEffectBox.emplace_back(
+        name,
+        color,
+        EffectBoxType::SELECTOR,
+        index
+    );
+    objectSelector.onLeftClickAdd = [this](EffectIndex effect) {
+        selectorClicked(effect);
+    };
+    objectSelector.onLeftClickRemove = [this](EffectIndex effect) {
+        removeFromChain(effect);
+    };
+    addAndMakeVisible(objectSelector);
     
-    this->selectEffectBox.push_back(EffectBox("Chorus", ColorsScheme::chorusPrimary, EffectBoxType::SELECTOR));
-    this->chainEffectBox.push_back(EffectBox("Chorus", ColorsScheme::chorusPrimary, EffectBoxType::CHAIN));
-    addAndMakeVisible(this->selectEffectBox[EffectIndex::CHORUS]);
-    addAndMakeVisible(this->chainEffectBox[EffectIndex::CHORUS]);
-
-    this->selectEffectBox.push_back(EffectBox("EQ", ColorsScheme::eqPrimary, EffectBoxType::SELECTOR));
-    this->chainEffectBox.push_back(EffectBox("EQ", ColorsScheme::eqPrimary, EffectBoxType::CHAIN));
-    addAndMakeVisible(this->selectEffectBox[EffectIndex::EQ]);
-    addAndMakeVisible(this->chainEffectBox[EffectIndex::EQ]);
+    auto& objectChain = this->chainEffectBox.emplace_back(
+        name,
+        color,
+        EffectBoxType::CHAIN,
+        index
+    );
+    addAndMakeVisible(objectChain);
 }
 
 //==============================================================================
@@ -63,7 +59,7 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g) {
     float startX = 200;
     g.setColour(juce::Colours::white);
     juce::Path seperatorChain;
-    for (std::size_t i = 0; i < (this->chainEffectBox.size() - 1); i++) {
+    for (std::size_t i = 0; (i + 1) < this->activeChain.size(); i++) {
         seperatorChain.addRectangle(startX + (i * 200), 20, 5, 60);    
         g.fillPath(seperatorChain);
     }
@@ -117,8 +113,44 @@ void AudioPluginAudioProcessorEditor::resized() {
     int chainBoxWidth = 170;
     int chainBoxHeight = 80;
 
-    for (std::size_t i = 0; i < this->chainEffectBox.size(); i++) {
-        this->chainEffectBox[i].setBounds(startX + (i * spacing), chainBoxY, chainBoxWidth, chainBoxHeight);
+    for (std::size_t i = 0; i < this->activeChain.size(); i++) {
+        this->activeChain[i]->setBounds(startX + (i * spacing), chainBoxY, chainBoxWidth, chainBoxHeight);
     }
 }
 
+void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
+    for (auto& it : this->activeChain) {
+        if (effect == EffectIndex::REVERB && it->getEffectName() == "Reverb") {
+            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO REVERB PAGE
+        }
+        if (effect == EffectIndex::DISTORTION && it->getEffectName() == "Distortion") {
+            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO Distortion PAGE
+        }
+        if (effect == EffectIndex::CHORUS && it->getEffectName() == "Chorus") {
+            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO Chorus PAGE
+        }
+        if (effect == EffectIndex::DELAY && it->getEffectName() == "Delay") {
+            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO Delay PAGE
+        }
+        if (effect == EffectIndex::EQ && it->getEffectName() == "EQ") {
+            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO EQ PAGE
+        }
+    }
+
+    this->activeChain.push_back(&chainEffectBox[effect]);
+    resized();
+    repaint();
+}
+
+void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
+    auto target = &chainEffectBox[effect];
+
+    for (auto it = activeChain.begin(); it != activeChain.end(); ++it) {
+        if (*it == target) {
+            activeChain.erase(it);
+            resized();
+            repaint();
+            return;
+        }
+    }
+}

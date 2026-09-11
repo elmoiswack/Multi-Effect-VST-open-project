@@ -1,14 +1,15 @@
 #include "EffectBox.hpp"
 
-EffectBox::EffectBox() : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted), xIcon(nullptr)
-{
+EffectBox::EffectBox() : xIcon(nullptr), drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted), effectIndex(EffectIndex::REVERB) {
     effectName = "";
     color[0] = 0;
     color[1] = 0;
     color[2] = 0;
 }
 
-EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxType typeBox) : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted) {
+EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxType typeBox, EffectIndex index) : 
+    drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted), effectIndex(index) 
+{
 	this->effectName = name;
 	this->color[0] = colorRGB[0];
 	this->color[1] = colorRGB[1];
@@ -20,9 +21,9 @@ EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxTy
 		BinaryData::x_svg,
 		BinaryData::x_svgSize);
 		this->drawableIcon.setImages(this->xIcon.get());
+        this->drawableIcon.onClick()= [this] { onLeftClickRemove };
 		addAndMakeVisible(this->drawableIcon);
-	}
-	else {
+	} else {
 		this->xIcon = nullptr;
 	}
 }
@@ -31,35 +32,50 @@ EffectBox::~EffectBox() {
 
 }
 
-EffectBox::EffectBox(EffectBox&& other) noexcept : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted) {
+EffectBox::EffectBox(EffectBox&& other) noexcept
+    : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted)
+{
     this->effectName = std::move(other.effectName);
-	this->xIcon = std::move(other.xIcon);
+    this->xIcon = std::move(other.xIcon);
+
     this->color[0] = other.color[0];
     this->color[1] = other.color[1];
     this->color[2] = other.color[2];
-	this->type = other.type;
+    this->type = other.type;
+    this->effectIndex = other.effectIndex;
+
+    if (this->xIcon != nullptr)
+        this->drawableIcon.setImages(this->xIcon.get());
+
+    addAndMakeVisible(this->drawableIcon);
 
     other.effectName = "";
     other.color[0] = 0;
     other.color[1] = 0;
     other.color[2] = 0;
-	addAndMakeVisible(this->drawableIcon);
 }
 
 EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
 {
-    if (this != &other) {
-    	this->effectName = std::move(other.effectName);
-		this->color[0] = other.color[0];
-		this->color[1] = other.color[1];
-		this->color[2] = other.color[2];
-		this->type = other.type;
-		this->xIcon = std::move(other.xIcon);
-		addAndMakeVisible(this->drawableIcon);
+    if (this != &other)
+    {
+        this->effectName = std::move(other.effectName);
+
+        this->color[0] = other.color[0];
+        this->color[1] = other.color[1];
+        this->color[2] = other.color[2];
+        this->effectIndex = other.effectIndex;
+        this->type = other.type;
+        this->xIcon = std::move(other.xIcon);
+
+        if (this->xIcon != nullptr)
+            this->drawableIcon.setImages(this->xIcon.get());
+
+        addAndMakeVisible(this->drawableIcon);
     }
+
     return *this;
 }
-
 
 void EffectBox::paint(juce::Graphics& g) {
 	float cornerSize = 20.f;
@@ -76,12 +92,24 @@ void EffectBox::paint(juce::Graphics& g) {
 }
 
 void EffectBox::resized() {
-	auto width = (float)getWidth();
-	float svgHeight = 10.0f;
-	float svgWidth = 10.0f;
+	int width = getWidth();
+	int svgHeight = 15.0f;
+	int svgWidth = 15.0f;
 
 	if (this->type == EffectBoxType::CHAIN) {
-		this->drawableIcon.setBounds(width - (svgWidth * 2), svgHeight, svgWidth, svgHeight);
+		this->drawableIcon.setBounds(width - (svgWidth * 1.5f), 10.0f, svgWidth, svgHeight);
 	}
 }
 
+void EffectBox::mouseDown(const juce::MouseEvent& event)
+{
+    if (event.mods.isLeftButtonDown())
+    {
+        if (onLeftClickAdd)
+            onLeftClickAdd(effectIndex);
+    }
+}
+
+juce::String EffectBox::getEffectName() {
+    return this->effectName;
+}

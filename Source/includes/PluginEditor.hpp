@@ -5,14 +5,6 @@
 #include "EffectBox.hpp"
 #include <vector>
 
-enum EffectIndex {
-    REVERB,
-    DISTORTION,
-    DELAY,
-    CHORUS,
-    EQ
-};
-
 struct ColorsScheme {
     inline static constexpr juce::uint8 reverbPrimary[3] = {255, 255, 100};
     inline static constexpr juce::uint8 distortionPrimary[3] = {158, 27, 0};
@@ -29,10 +21,15 @@ public:
     ~AudioPluginAudioProcessorEditor() override;
 
     void initEffectBoxes();
+    void initEffectObject(juce::String name, const juce::uint8* color, EffectIndex index);
+
 
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+
+    void selectorClicked(EffectIndex effect);
+    void removeFromChain(EffectIndex effect);
 
 private:
     // This reference is provided as a quick way for your editor to
@@ -41,7 +38,7 @@ private:
 
     std::vector<EffectBox> selectEffectBox;
     std::vector<EffectBox> chainEffectBox;
-    std::vector<EffectBox> activeChain;
+    std::vector<EffectBox*> activeChain;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };
