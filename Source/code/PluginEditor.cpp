@@ -142,12 +142,29 @@ void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
     if (std::find(this->activeChain.begin(), this->activeChain.end(), target) != this->activeChain.end())
         return;
 
-    if (!this->activeChain.empty() && this->activeChain.back() == this->adder)
+    std::cout << "SIZE ACTIVE: " << std::endl;
+    std::cout << this->activeChain.size() << std::endl;
+
+    if (!this->activeChain.empty() && this->activeChain.back() == this->adder) {
+        std::cout << "POP" << std::endl;
+        this->adder->setVisible(false);
         this->activeChain.pop_back();
+    }
+
+    std::cout << this->activeChain.size() << std::endl;
+
 
     this->activeChain.push_back(target);
-    if (this->activeChain.size() < 5)
+
+    std::cout << this->activeChain.size() << std::endl;
+
+    target->setVisible(true);
+    if (this->activeChain.size() < 5) {
+        std::cout << "PUSH" << std::endl;
+        this->adder->setVisible(true);
         this->activeChain.push_back(this->adder);
+    }
+    std::cout << this->activeChain.size() << std::endl;
 
     resized();
     repaint();
@@ -159,11 +176,14 @@ void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
     auto it = std::find(this->activeChain.begin(), this->activeChain.end(), target);
     if (it == this->activeChain.end())
         return;
+    target->setVisible(false);
 
     this->activeChain.erase(it);
 
-    if (std::find(this->activeChain.begin(), this->activeChain.end(), this->adder) == this->activeChain.end())
+    if (std::find(this->activeChain.begin(), this->activeChain.end(), this->adder) == this->activeChain.end()) {
+        this->adder->setVisible(true);
         this->activeChain.push_back(this->adder);
+    }
 
     resized();
     repaint();
