@@ -39,6 +39,7 @@ private:
     std::vector<EffectBox> selectEffectBox;
     std::vector<EffectBox> chainEffectBox;
     std::vector<EffectBox*> activeChain;
+    EffectBox* adder;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

@@ -21,7 +21,7 @@ EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxTy
 		BinaryData::x_svg,
 		BinaryData::x_svgSize);
 		this->drawableIcon.setImages(this->xIcon.get());
-        this->drawableIcon.onClick()= [this] { onLeftClickRemove };
+        this->drawableIcon.onClick = [this] { onLeftClickRemove(this->effectIndex); };
 		addAndMakeVisible(this->drawableIcon);
 	} else {
 		this->xIcon = nullptr;
@@ -84,11 +84,29 @@ void EffectBox::paint(juce::Graphics& g) {
 	g.fillRoundedRectangle(getLocalBounds().toFloat(), cornerSize);
 	g.drawRoundedRectangle(getLocalBounds().toFloat(), cornerSize, 5.0f);
 
-	g.setColour(juce::Colour::fromRGB(this->color[0], this->color[1], this->color[2]));
-	// juce::FontOptions font("FreeSans", 40.0f, juce::Font::bold);
-	// std::cout << font.getTypeface() << std::endl;
-	g.setFont(30.f);
-	g.drawText(this->effectName, getLocalBounds(), juce::Justification::centred);
+    if (this->type == EffectBoxType::ADDER) {
+        juce::Path verticle;
+        juce::Path horizontal;
+        int chainBoxWidth = 170;
+        int chainBoxHeight = 80;
+
+        int startVert = chainBoxWidth / 2 ;
+        int startHori = chainBoxHeight / 2;
+        int vertHeight = 60;
+
+        verticle.addRectangle(startVert, 10, 10, vertHeight);
+        horizontal.addRectangle((getWidth() / 2) - (vertHeight / 2) + 5, startHori - 5, vertHeight, 10);
+
+        g.setColour(juce::Colours::white);
+        g.fillPath(verticle);
+        g.fillPath(horizontal);
+    } else {
+        // juce::FontOptions font("FreeSans", 40.0f, juce::Font::bold);
+        // std::cout << font.getTypeface() << std::endl;
+        g.setColour(juce::Colour::fromRGB(this->color[0], this->color[1], this->color[2]));
+        g.setFont(30.f);
+        g.drawText(this->effectName, getLocalBounds(), juce::Justification::centred);
+    }
 }
 
 void EffectBox::resized() {

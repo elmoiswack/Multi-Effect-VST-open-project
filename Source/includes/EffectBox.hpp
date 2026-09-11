@@ -6,12 +6,14 @@ enum EffectIndex {
     DISTORTION,
     DELAY,
     CHORUS,
-    EQ
+    EQ,
+	ADD,
 };
 
 enum EffectBoxType {
 	CHAIN,
 	SELECTOR,
+	ADDER,
 };
 
 class EffectBox : public juce::Component

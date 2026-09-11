@@ -8,9 +8,24 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     juce::ignoreUnused (processorRef);
 
     this->selectEffectBox.reserve(5);
-    this->chainEffectBox.reserve(5);
+    this->chainEffectBox.reserve(6);
     this->activeChain.reserve(5);
     initEffectBoxes();
+    auto& adderBox = this->chainEffectBox.emplace_back(
+        "Adder",
+        ColorsScheme::eqPrimary,
+        EffectBoxType::ADDER,
+        EffectIndex::ADD
+    );
+
+    adderBox.onLeftClickAdd = [this](EffectIndex effect) {
+        // return to selector overview
+    };
+
+    addAndMakeVisible(adderBox);
+
+    this->adder = &adderBox;
+    this->activeChain.push_back(this->adder);
 
     setSize(1000, 800);
     resized();
@@ -38,9 +53,6 @@ void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const 
     objectSelector.onLeftClickAdd = [this](EffectIndex effect) {
         selectorClicked(effect);
     };
-    objectSelector.onLeftClickRemove = [this](EffectIndex effect) {
-        removeFromChain(effect);
-    };
     addAndMakeVisible(objectSelector);
     
     auto& objectChain = this->chainEffectBox.emplace_back(
@@ -49,6 +61,9 @@ void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const 
         EffectBoxType::CHAIN,
         index
     );
+    objectChain.onLeftClickRemove = [this](EffectIndex effect) {
+        removeFromChain(effect);
+    };
     addAndMakeVisible(objectChain);
 }
 
@@ -113,44 +128,44 @@ void AudioPluginAudioProcessorEditor::resized() {
     int chainBoxWidth = 170;
     int chainBoxHeight = 80;
 
+    std::cout << "Size chain active: " << this->activeChain.size() << std::endl;
     for (std::size_t i = 0; i < this->activeChain.size(); i++) {
+		if (i == 5)
+			break ;
         this->activeChain[i]->setBounds(startX + (i * spacing), chainBoxY, chainBoxWidth, chainBoxHeight);
     }
 }
 
 void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
-    for (auto& it : this->activeChain) {
-        if (effect == EffectIndex::REVERB && it->getEffectName() == "Reverb") {
-            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO REVERB PAGE
-        }
-        if (effect == EffectIndex::DISTORTION && it->getEffectName() == "Distortion") {
-            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO Distortion PAGE
-        }
-        if (effect == EffectIndex::CHORUS && it->getEffectName() == "Chorus") {
-            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO Chorus PAGE
-        }
-        if (effect == EffectIndex::DELAY && it->getEffectName() == "Delay") {
-            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO Delay PAGE
-        }
-        if (effect == EffectIndex::EQ && it->getEffectName() == "EQ") {
-            return ; //TODO: INSTEAD OF RETURN, DIRECT USER TO EQ PAGE
-        }
-    }
+    auto target = &this->chainEffectBox[effect];
 
-    this->activeChain.push_back(&chainEffectBox[effect]);
+    if (std::find(this->activeChain.begin(), this->activeChain.end(), target) != this->activeChain.end())
+        return;
+
+    if (!this->activeChain.empty() && this->activeChain.back() == this->adder)
+        this->activeChain.pop_back();
+
+    this->activeChain.push_back(target);
+    if (this->activeChain.size() < 5)
+        this->activeChain.push_back(this->adder);
+
     resized();
     repaint();
 }
 
 void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
-    auto target = &chainEffectBox[effect];
+    auto target = &this->chainEffectBox[effect];
 
-    for (auto it = activeChain.begin(); it != activeChain.end(); ++it) {
-        if (*it == target) {
-            activeChain.erase(it);
-            resized();
-            repaint();
-            return;
-        }
-    }
+    auto it = std::find(this->activeChain.begin(), this->activeChain.end(), target);
+    if (it == this->activeChain.end())
+        return;
+
+    this->activeChain.erase(it);
+
+    if (std::find(this->activeChain.begin(), this->activeChain.end(), this->adder) == this->activeChain.end())
+        this->activeChain.push_back(this->adder);
+
+    resized();
+    repaint();
 }
+
