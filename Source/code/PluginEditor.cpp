@@ -83,6 +83,10 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g) {
     seperatorChainSelector.addRectangle(0, 100, 1000, 10);
     g.setColour(juce::Colours::black);
 	g.fillPath(seperatorChainSelector);
+
+    juce::Path seperatorSelectorMain;
+    seperatorSelectorMain.addRectangle(0, 700, 1000, 10);
+	g.fillPath(seperatorSelectorMain);
 }
 
 void AudioPluginAudioProcessorEditor::resized() {
@@ -128,10 +132,7 @@ void AudioPluginAudioProcessorEditor::resized() {
     int chainBoxWidth = 170;
     int chainBoxHeight = 80;
 
-    std::cout << "Size chain active: " << this->activeChain.size() << std::endl;
     for (std::size_t i = 0; i < this->activeChain.size(); i++) {
-		if (i == 5)
-			break ;
         this->activeChain[i]->setBounds(startX + (i * spacing), chainBoxY, chainBoxWidth, chainBoxHeight);
     }
 }
@@ -142,29 +143,18 @@ void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
     if (std::find(this->activeChain.begin(), this->activeChain.end(), target) != this->activeChain.end())
         return;
 
-    std::cout << "SIZE ACTIVE: " << std::endl;
-    std::cout << this->activeChain.size() << std::endl;
-
     if (!this->activeChain.empty() && this->activeChain.back() == this->adder) {
-        std::cout << "POP" << std::endl;
         this->adder->setVisible(false);
         this->activeChain.pop_back();
     }
 
-    std::cout << this->activeChain.size() << std::endl;
-
-
     this->activeChain.push_back(target);
-
-    std::cout << this->activeChain.size() << std::endl;
-
     target->setVisible(true);
+
     if (this->activeChain.size() < 5) {
-        std::cout << "PUSH" << std::endl;
         this->adder->setVisible(true);
         this->activeChain.push_back(this->adder);
     }
-    std::cout << this->activeChain.size() << std::endl;
 
     resized();
     repaint();
