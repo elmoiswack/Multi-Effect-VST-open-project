@@ -123,8 +123,11 @@ void EffectBox::mouseDown(const juce::MouseEvent& event)
 {
     if (event.mods.isLeftButtonDown())
     {
-        if (onLeftClickAdd)
+        if (onLeftClickAdd && this->type == EffectBoxType::SELECTOR)
             onLeftClickAdd(effectIndex);
+        if (onLeftClickShowEffect && \
+        (this->type == EffectBoxType::CHAIN || this->type == EffectBoxType::ADDER))
+            onLeftClickShowEffect(effectIndex);
     }
 }
 
