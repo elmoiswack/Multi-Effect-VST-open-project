@@ -15,11 +15,11 @@ struct ColorsScheme {
     inline static constexpr juce::uint8 distortionBackground[3] = {108, 0, 0};
 
     inline static constexpr juce::uint8 delayPrimary[3] = {19, 197, 96};
-    inline static constexpr juce::uint8 delayPrimary[3] = {255, 255, 0};
+    inline static constexpr juce::uint8 delaySecondary[3] = {255, 255, 0};
 	inline static constexpr juce::uint8 delayBackground[3] = {0, 100, 21};
 
     inline static constexpr juce::uint8 chorusPrimary[3] = {124, 25, 150};
-    inline static constexpr juce::uint8 chorusPrimary[3] = {25, 255, 25};
+    inline static constexpr juce::uint8 chorusSecondary[3] = {25, 255, 25};
 	inline static constexpr juce::uint8 chorusBackground[3] = {51, 0, 76};
 
     inline static constexpr juce::uint8 eqPrimary[3] = {255, 255, 255};
@@ -72,6 +72,9 @@ public:
     void selectorClicked(EffectIndex effect);
     void removeFromChain(EffectIndex effect);
 
+    void dragChainObject(EffectIndex effect, const juce::MouseEvent& event);
+    void swapChainObjects(EffectIndex effect, const juce::MouseEvent& event);
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
@@ -84,5 +87,9 @@ private:
 
     EffectIndex currentSelected;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
+    bool drawMoveChainObject;
+    juce::Path moveRectangle;
+    
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

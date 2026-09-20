@@ -12,6 +12,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     this->activeChain.reserve(5);
     initEffectBoxes();
 
+    this->drawMoveChainObject = false;
     this->currentSelected = EffectIndex::ADD;
 
     setSize(1000, 800);
@@ -64,12 +65,23 @@ void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const 
         EffectBoxType::CHAIN,
         index
     );
-    objectChain.onLeftClickShowEffect = [this] (EffectIndex effect) {
+
+    objectChain.onLeftClickDragEffect = [this](EffectIndex effect, const juce::MouseEvent& event) {
+        if (this->activeChain.size() == 2) {
+            return ;
+        }
+        this->dragChainObject(effect, event);
+    };
+    objectChain.onLeftClickReplaceAfterDrag = [this](EffectIndex effect, const juce::MouseEvent& event) {
+        this->swapChainObjects(effect, event);
+    };
+    objectChain.onLeftClickShowEffect = [this](EffectIndex effect) {
         this->computeView(effect);
     };
     objectChain.onLeftClickRemove = [this](EffectIndex effect) {
-        removeFromChain(effect);
+        this->removeFromChain(effect);
     };
+
     addAndMakeVisible(objectChain);
 }
 
@@ -93,6 +105,18 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g) {
     juce::Path seperatorSelectorMain;
     seperatorSelectorMain.addRectangle(0, 700, 1000, 10);
 	g.fillPath(seperatorSelectorMain);
+
+    if (this->drawMoveChainObject) {
+        g.setColour(juce::Colours::white);
+        juce::Path path;
+        path.addRectangle(this->moveRectangle.getBounds());
+        juce::PathStrokeType pathStrokType(1.0);
+        float dashedLengh[2];
+        dashedLengh[0]=4;
+        dashedLengh[1]=4;
+        pathStrokType.createDashedStroke(path, path, dashedLengh, 2);
+        g.strokePath(path, pathStrokType);
+    }
 
     switch (this->currentSelected)
     {
@@ -201,6 +225,7 @@ void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
         this->activeChain.pop_back();
     }
 
+    this->selectEffectBox[effect].setActive(true);
     this->activeChain.push_back(target);
     target->setVisible(true);
 
@@ -219,6 +244,8 @@ void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
     if (it == this->activeChain.end())
         return;
     target->setVisible(false);
+    this->selectEffectBox[effect].setActive(false);
+
 
     this->activeChain.erase(it);
 
@@ -227,10 +254,57 @@ void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
         this->activeChain.push_back(this->adder);
     }
 
-    if (this->currentSelected == effect) {
+    if (this->currentSelected == effect || this->activeChain.size() == 1) {
         this->computeView(EffectIndex::ADD);
         return ;
     }
-    this->computeView(effect);
+    this->computeView(this->currentSelected);
 }
 
+void AudioPluginAudioProcessorEditor::dragChainObject(EffectIndex effect, const juce::MouseEvent& event) {
+    this->drawMoveChainObject = true;
+
+    float rectangleY      = 5.f;
+    float rectangleWidth  = 180.f;
+    float rectangleHeight = 90.f;
+    int   slotWidth       = 200;
+    int   firstSlotX      = 10;
+
+    int xPos = event.getEventRelativeTo(this).getPosition().x;
+
+    int slot = (xPos - firstSlotX) / slotWidth;
+    slot = juce::jlimit(0, (int)this->activeChain.size() - 1, slot);
+
+    float rectangleX = (float)firstSlotX + slot * slotWidth;
+
+    this->moveRectangle.clear();
+    this->moveRectangle.addRectangle<float>({rectangleX, rectangleY, rectangleWidth, rectangleHeight});
+
+    this->computeView(this->currentSelected);
+}
+
+#include <algorithm>
+
+void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const juce::MouseEvent& event) {
+
+    int xPos = event.getEventRelativeTo(this).getPosition().x;
+    int   slotWidth       = 200;
+    int   firstSlotX      = 10;
+    int slot = (xPos - firstSlotX) / slotWidth;
+    slot = juce::jlimit(0, (int)this->activeChain.size(), slot);
+
+    int startSlot = event.getEventRelativeTo(this).getMouseDownPosition().getX() / slotWidth;
+    startSlot = juce::jlimit(0, (int)this->activeChain.size() - 1, startSlot);
+
+    auto it = this->activeChain.begin() + slot;
+    if ((*it)->getEffectBoxType() == EffectBoxType::ADDER) {
+        this->drawMoveChainObject = false;
+        this->computeView(this->currentSelected);
+        return ;
+    }
+
+    std::iter_swap(this->activeChain.begin() + startSlot, this->activeChain.begin() + slot);
+
+    this->drawMoveChainObject = false;
+    this->computeView(this->currentSelected);
+}
