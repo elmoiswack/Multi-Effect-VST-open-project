@@ -4,6 +4,7 @@
 #include "Slider.hpp"
 #include "EffectBox.hpp"
 #include <vector>
+#include <algorithm>
 
 struct ColorsScheme {
     inline static constexpr juce::uint8 reverbPrimary[3] = {255, 255, 100};

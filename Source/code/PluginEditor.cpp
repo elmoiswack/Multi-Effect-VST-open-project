@@ -283,8 +283,6 @@ void AudioPluginAudioProcessorEditor::dragChainObject(EffectIndex effect, const 
     this->computeView(this->currentSelected);
 }
 
-#include <algorithm>
-
 void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const juce::MouseEvent& event) {
 
     int xPos = event.getEventRelativeTo(this).getPosition().x;
