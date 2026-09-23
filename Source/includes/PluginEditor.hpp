@@ -37,31 +37,36 @@ public:
     explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor&);
     ~AudioPluginAudioProcessorEditor() override;
 
-    void initEffectBoxes();
-    void initEffectObject(juce::String name, const juce::uint8* color, EffectIndex index);
 
 	void computeView(EffectIndex effect);
 
+    void selectorInit();
+    void initEffectObject(juce::String name, const juce::uint8* color, EffectIndex index);
     void selectorPaint(juce::Graphics& g);
     void selectorResized();
     void selectorHide();
 
+    void reverbInit();
     void reverbPaint(juce::Graphics& g);
     void reverbResized();
     void reverbHide();
 
+    void distortionInit();
     void distortionPaint(juce::Graphics& g);
     void distortionResized();
     void distortionHide();
 
+    void delayInit();
     void delayPaint(juce::Graphics& g);
     void delayResized();
     void delayHide();
 
+    void chorusInit();
     void chorusPaint(juce::Graphics& g);
     void chorusResized();
     void chorusHide();
 
+    void eqInit();
     void eqPaint(juce::Graphics& g);
     void eqResized();
     void eqHide();
@@ -91,6 +96,11 @@ private:
     bool drawMoveChainObject;
     juce::Path moveRectangle;
     
+    juce::Rectangle<float> effectArea;
+    float cornerSizeEffectArea;
+
+    //EQ params//
+    std::vector<Slider> eqSliders;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

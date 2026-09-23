@@ -1,5 +1,9 @@
 #include "PluginEditor.hpp"
 
+void AudioPluginAudioProcessorEditor::distortionInit() {
+	
+}
+
 void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
 	float minWidth = 10.f;
 	float maxWidth = 980.f;

@@ -1,5 +1,9 @@
 #include "PluginEditor.hpp"
 
+void AudioPluginAudioProcessorEditor::chorusInit() {
+	
+}
+
 void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
 	float minWidth = 10.f;
 	float maxWidth = 980.f;

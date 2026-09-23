@@ -37,8 +37,7 @@ EffectBox::~EffectBox() {
 }
 
 EffectBox::EffectBox(EffectBox&& other) noexcept
-    : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted)
-{
+    : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted) {
     this->effectName = std::move(other.effectName);
     this->xIcon = std::move(other.xIcon);
 
@@ -60,8 +59,7 @@ EffectBox::EffectBox(EffectBox&& other) noexcept
     other.color[2] = 0;
 }
 
-EffectBox& EffectBox::operator=(EffectBox&& other) noexcept
-{
+EffectBox& EffectBox::operator=(EffectBox&& other) noexcept {
     if (this != &other)
     {
         this->effectName = std::move(other.effectName);
