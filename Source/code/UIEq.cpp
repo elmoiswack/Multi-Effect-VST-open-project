@@ -11,12 +11,19 @@ void AudioPluginAudioProcessorEditor::eqInit() {
 	this->eqSliders.emplace_back("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
 	addAndMakeVisible(this->eqSliders[LOWFREQ]);
 
-		this->eqSliders.emplace_back("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
+	this->eqSliders.emplace_back("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
 	addAndMakeVisible(this->eqSliders[LOWGAIN]);
 
-		this->eqSliders.emplace_back("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
+	this->eqSliders.emplace_back("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
 	addAndMakeVisible(this->eqSliders[LOWQ]);
 
+	for (std::size_t i = 0; i < this->eqSliders.size(); i++) {
+		this->eqSliders[i].moveSlider = [this](const juce::MouseEvent &event) {
+			//TODO: move slider
+			int xPos = event.getEventRelativeTo(this).getPosition().x;
+			
+		};
+	}
 }
 
 void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
@@ -25,6 +32,29 @@ void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(bgColor[0], bgColor[1], bgColor[2]));
 	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);
 	g.drawRoundedRectangle(this->effectArea, this->cornerSizeEffectArea, 5.0f);
+
+	auto x = this->effectArea.getX();
+	auto y = this->effectArea.getY();
+	auto width = this->effectArea.getWidth();
+	auto height = this->effectArea.getHeight();
+	
+	int sliderWidth = 90;
+	
+	float lowX = x + (width / 4) - sliderWidth;
+	float lowY = y + (height / 2.5f);
+	float yOffset = 110.f;
+	juce::Rectangle<float> low = {lowX, lowY - 20.f, 100.f, 20.f};
+
+
+	g.setColour(juce::Colour::fromRGB(ColorsScheme::eqSecondary[0], ColorsScheme::eqSecondary[1], ColorsScheme::eqSecondary[2]));	
+	g.drawText(this->eqSliders[LOWFREQ].getName(), low, juce::Justification::centred, true);
+
+	low.setY(lowY - 20.f + yOffset);
+	g.drawText(this->eqSliders[LOWGAIN].getName(), low, juce::Justification::centred, true);
+	
+	low.setY(lowY - 20.f + (yOffset * 2));
+	g.drawText(this->eqSliders[LOWQ].getName(), low, juce::Justification::centred, true);
+	
 }
 
 void AudioPluginAudioProcessorEditor::eqResized() {
@@ -33,8 +63,8 @@ void AudioPluginAudioProcessorEditor::eqResized() {
 	auto width = this->effectArea.getWidth();
 	auto height = this->effectArea.getHeight();
 	
-	int sliderWidth = 90;
-	int sliderHeigth = 90;
+	int sliderWidth = 80;
+	int sliderHeigth = 80;
 	
 	int lowX = x + (width / 4) - sliderWidth;
 	int lowY = y + (height / 2.5f);

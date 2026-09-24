@@ -233,8 +233,8 @@ void AudioPluginAudioProcessorEditor::dragChainObject(EffectIndex effect, const 
 void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const juce::MouseEvent& event) {
 
     int xPos = event.getEventRelativeTo(this).getPosition().x;
-    int   slotWidth       = 200;
-    int   firstSlotX      = 10;
+    int slotWidth = 200;
+    int firstSlotX = 10;
     int slot = (xPos - firstSlotX) / slotWidth;
     slot = juce::jlimit(0, (int)this->activeChain.size(), slot);
 
