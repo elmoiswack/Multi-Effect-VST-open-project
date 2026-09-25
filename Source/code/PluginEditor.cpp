@@ -29,7 +29,8 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
-
+    for (auto& it : this->eqSliders)
+        it.reset();
 }
 
 //==============================================================================

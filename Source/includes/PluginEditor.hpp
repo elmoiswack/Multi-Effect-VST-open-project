@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PluginProcessor.hpp"
-#include "Slider.hpp"
+#include "CustomSlider.hpp"
 #include "EffectBox.hpp"
 #include <vector>
 #include <algorithm>
@@ -100,7 +100,7 @@ private:
     float cornerSizeEffectArea;
 
     //EQ params//
-    std::vector<Slider> eqSliders;
+    std::vector<std::unique_ptr<CustomSlider>> eqSliders;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };

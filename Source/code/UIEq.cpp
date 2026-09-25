@@ -8,22 +8,21 @@ enum eqIndex {
 
 void AudioPluginAudioProcessorEditor::eqInit() {
 	this->eqSliders.reserve(3);
-	this->eqSliders.emplace_back("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
-	addAndMakeVisible(this->eqSliders[LOWFREQ]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, LOWFREQ));
+	addAndMakeVisible(*this->eqSliders[LOWFREQ]);
 
-	this->eqSliders.emplace_back("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
-	addAndMakeVisible(this->eqSliders[LOWGAIN]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, LOWGAIN));
+	addAndMakeVisible(*this->eqSliders[LOWGAIN]);
 
-	this->eqSliders.emplace_back("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
-	addAndMakeVisible(this->eqSliders[LOWQ]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, LOWQ));
+	addAndMakeVisible(*this->eqSliders[LOWQ]);
 
-	for (std::size_t i = 0; i < this->eqSliders.size(); i++) {
-		this->eqSliders[i].moveSlider = [this](const juce::MouseEvent &event) {
-			//TODO: move slider
-			int xPos = event.getEventRelativeTo(this).getPosition().x;
-			
-		};
-	}
+  	for (auto& slider : eqSliders) {
+        slider->moveSlider = [this](const juce::MouseEvent& event, int index) {
+            int xPos = event.getEventRelativeTo(this).getPosition().x;
+            this->eqSliders[index]->setSliderPos((float)xPos);
+        };
+    }
 }
 
 void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
@@ -47,13 +46,13 @@ void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
 
 
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::eqSecondary[0], ColorsScheme::eqSecondary[1], ColorsScheme::eqSecondary[2]));	
-	g.drawText(this->eqSliders[LOWFREQ].getName(), low, juce::Justification::centred, true);
+	g.drawText(this->eqSliders[LOWFREQ]->getName(), low, juce::Justification::centred, true);
 
 	low.setY(lowY - 20.f + yOffset);
-	g.drawText(this->eqSliders[LOWGAIN].getName(), low, juce::Justification::centred, true);
+	g.drawText(this->eqSliders[LOWGAIN]->getName(), low, juce::Justification::centred, true);
 	
 	low.setY(lowY - 20.f + (yOffset * 2));
-	g.drawText(this->eqSliders[LOWQ].getName(), low, juce::Justification::centred, true);
+	g.drawText(this->eqSliders[LOWQ]->getName(), low, juce::Justification::centred, true);
 	
 }
 
@@ -70,21 +69,21 @@ void AudioPluginAudioProcessorEditor::eqResized() {
 	int lowY = y + (height / 2.5f);
 	int yOffset = 110;
 
-	this->eqSliders[LOWFREQ].setBounds(
+	this->eqSliders[LOWFREQ]->setBounds(
 		lowX,
 		lowY,
 		sliderWidth,
 		sliderHeigth
 	);
 
-	this->eqSliders[LOWGAIN].setBounds(
+	this->eqSliders[LOWGAIN]->setBounds(
 		lowX,
 		lowY + yOffset,
 		sliderWidth,
 		sliderHeigth
 	);
 
-	this->eqSliders[LOWQ].setBounds(
+	this->eqSliders[LOWQ]->setBounds(
 		lowX,
 		lowY + (yOffset * 2),
 		sliderWidth,
@@ -92,12 +91,12 @@ void AudioPluginAudioProcessorEditor::eqResized() {
 	);
 
 	for (std::size_t i = 0; i < this->eqSliders.size(); i++) {
-		this->eqSliders[i].setVisible(true);
+		this->eqSliders[i]->setVisible(true);
 	}
 }
 
 void AudioPluginAudioProcessorEditor::eqHide() {
 	for (std::size_t i = 0; i < this->eqSliders.size(); i++) {
-		this->eqSliders[i].setVisible(false);
+		this->eqSliders[i]->setVisible(false);
 	}
 }
