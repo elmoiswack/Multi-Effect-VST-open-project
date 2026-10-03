@@ -31,8 +31,12 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
     for (auto& it : this->eqSliders)
         it.reset();
 
+    for (auto& it : this->reverbSliders)
+        it.reset();
+
     this->lowSlope.setLookAndFeel(nullptr);
     this->highSlope.setLookAndFeel(nullptr);
+    this->reverbType.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
