@@ -43,10 +43,7 @@ void AudioPluginAudioProcessorEditor::CustomLAFCombo::drawComboBox(juce::Graphic
 
 void AudioPluginAudioProcessorEditor::CustomLAFCombo::drawPopupMenuItem(juce::Graphics& g, const juce::Rectangle<int>& area, bool isSeparator, bool isActive, bool isHighlighted, bool isTicked, bool hasSubMenu, const juce::String& text, const juce::String& shortcutKeyText, const juce::Drawable* icon, const juce::Colour* textColour) {
     juce::Colour grey = juce::Colours::grey;
-
-    juce::LookAndFeel_V4::drawPopupMenuItem(g, area, isSeparator, isActive, isHighlighted,
-                                            false, hasSubMenu, text, shortcutKeyText, icon,
-                                            isTicked ? &grey : textColour);
+    juce::LookAndFeel_V4::drawPopupMenuItem(g, area, isSeparator, isActive, isHighlighted, false, hasSubMenu, text, shortcutKeyText, icon, isTicked ? &grey : textColour);
 }
 
 juce::Font AudioPluginAudioProcessorEditor::CustomLAFCombo::getComboBoxFont(juce::ComboBox&) {
