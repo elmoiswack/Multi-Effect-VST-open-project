@@ -10,23 +10,24 @@ private:
 	juce::uint8 primaryColor[3];
 	juce::uint8 secondaryColor[3];
 
-	float sliderPos;
+	float normalisedValue = 0.f;
+    float dragStartValue = 0.f;
 
 public:
 	CustomSlider();
-	// Slider(Slider&& other) noexcept;
-	// Slider& operator=(Slider&& other) noexcept;
 	CustomSlider(juce::String sliderName, const juce::uint8* primary, const juce::uint8* secondary, int indexValue);
 	~CustomSlider() override; 
 
     void paint(juce::Graphics& g) override;
     void resized() override;
 
-	void setSliderPos(float value);
+    void setValue(float newValue);
+    float getValue() const;
 
 	juce::String getName();
 
-	void mouseDrag(const juce::MouseEvent& event) override;
-	std::function<void(const juce::MouseEvent&, int)> moveSlider;
+	void mouseDown(const juce::MouseEvent& event) override;
+    void mouseDrag(const juce::MouseEvent& event) override;
+	std::function<void(int index, float value)> onValueChange;
 };
 

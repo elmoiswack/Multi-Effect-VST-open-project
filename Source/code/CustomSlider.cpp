@@ -1,6 +1,7 @@
 #include "CustomSlider.hpp"
 
 CustomSlider::CustomSlider() {
+	this->index = 0;
 	this->primaryColor[0] = 0;
 	this->primaryColor[1] = 0;
 	this->primaryColor[2] = 0;
@@ -9,12 +10,13 @@ CustomSlider::CustomSlider() {
 	this->secondaryColor[1] = 0;
 	this->secondaryColor[2] = 0;
 
-	this->sliderPos = 0.f;
-	this->index = 0;
+	this->normalisedValue = 0.f;
+    this->dragStartValue = 0.f;
 }
 
 CustomSlider::CustomSlider(juce::String sliderName, const juce::uint8* primary, const juce::uint8* secondary, int indexValue) {
 	this->name = sliderName;
+	this->index = indexValue;
 
 	this->primaryColor[0] = primary[0];
 	this->primaryColor[1] = primary[1];
@@ -24,8 +26,8 @@ CustomSlider::CustomSlider(juce::String sliderName, const juce::uint8* primary, 
 	this->secondaryColor[1] = secondary[1];
 	this->secondaryColor[2] = secondary[2];
 
-	this->sliderPos = 0.f;
-	this->index = indexValue;
+	this->normalisedValue = 0.f;
+    this->dragStartValue = 0.f;
 }
 
 CustomSlider::~CustomSlider() {}
@@ -42,9 +44,7 @@ void CustomSlider::paint(juce::Graphics& g) {
     float rx = centreX - radius;
     float ry = centreY - radius;
     float rw = radius * 2.0f;
-
-    float normalizedPosition = this->sliderPos / 20.0f;
-    float angle = rotaryStartAngle + normalizedPosition *(rotaryEndAngle - rotaryStartAngle);
+    float angle = rotaryStartAngle + this->normalisedValue *(rotaryEndAngle - rotaryStartAngle);
 
     g.setColour(juce::Colour::fromRGB(this->primaryColor[0], this->primaryColor[1], this->primaryColor[2]));
     g.fillEllipse(rx, ry, rw, rw);
@@ -60,18 +60,29 @@ void CustomSlider::paint(juce::Graphics& g) {
     g.fillPath(p);
 }
 
-
 void CustomSlider::resized() {}
 
-void CustomSlider::mouseDrag(const juce::MouseEvent& event) {
-	if (moveSlider) {
-		moveSlider(event, this->index);
-	}
+void CustomSlider::mouseDown(const juce::MouseEvent&) {
+    this->dragStartValue = this->normalisedValue;
 }
 
-void CustomSlider::setSliderPos(float value) {
-	this->sliderPos = juce::jlimit(0.f, 20.f, (value / 20.f));
-	repaint();
+void CustomSlider::mouseDrag(const juce::MouseEvent& event) {
+    float pixelsForFullRange = 400.0f;
+    float delta = (float) (event.getDistanceFromDragStartX() - event.getDistanceFromDragStartY());
+
+	this->setValue(this->dragStartValue + delta / pixelsForFullRange);
+}
+
+void CustomSlider::setValue(float newValue) {
+    newValue = juce::jlimit(0.0f, 1.0f, newValue);
+    if (newValue == this->normalisedValue)
+        return;
+
+    this->normalisedValue = newValue;
+    repaint();
+
+    if (onValueChange)
+        onValueChange(this->index, this->normalisedValue);
 }
 
 juce::String CustomSlider::getName() {

@@ -82,8 +82,6 @@ public:
     void swapChainObjects(EffectIndex effect, const juce::MouseEvent& event);
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     AudioPluginAudioProcessor& processorRef;
 
     std::vector<EffectBox> selectEffectBox;
@@ -100,7 +98,28 @@ private:
     float cornerSizeEffectArea;
 
     //EQ params//
+    class CustomLAFCombo : public juce::LookAndFeel_V4
+    {
+    public:
+        CustomLAFCombo();
+        void setColors();
+        void positionComboBoxText(juce::ComboBox& box, juce::Label& label) override;
+        void drawComboBox(juce::Graphics& g, int width, int height, bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH, juce::ComboBox& box) override;
+        void drawPopupMenuItem(juce::Graphics& g, const juce::Rectangle<int>& area, bool isSeparator, bool isActive, bool isHighlighted, bool isTicked, bool hasSubMenu, const juce::String& text, const juce::String& shortcutKeyText, const juce::Drawable* icon, const juce::Colour* textColour) override;
+        juce::Font getComboBoxFont(juce::ComboBox&) override;
+        void setFontSize(float size);
+        void setCornerRadius(float radius);
+    private:
+        juce::Colour colorPrimary   = juce::Colours::white;
+        juce::Colour colorSecondary = juce::Colours::black;
+        float fontSize = 14.0f;
+        float cornerRadius = 6.0f;
+        
+    };
     std::vector<std::unique_ptr<CustomSlider>> eqSliders;
+    juce::ComboBox lowSlope;
+    juce::ComboBox highSlope;
+    CustomLAFCombo LAFComboBox;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AudioPluginAudioProcessorEditor)
 };
