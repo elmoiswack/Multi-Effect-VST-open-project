@@ -67,17 +67,9 @@ void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const 
 }
 
 void AudioPluginAudioProcessorEditor::selectorPaint(juce::Graphics& g) {
-	float minWidth = 10.f;
-	float maxWidth = 980.f;
-	float minHeight = 120.f;
-	float maxHeight = 570.f;
-	float cornerSize = 20.f;
-
-	auto& bgColor = ColorsScheme::addBackground;
-
-	g.setColour(juce::Colour::fromRGB(bgColor[0], bgColor[1], bgColor[2]));
-	g.fillRoundedRectangle(minWidth, minHeight, maxWidth, maxHeight, cornerSize);
-	g.drawRoundedRectangle(minWidth, minHeight, maxWidth, maxHeight, cornerSize, 5.0f);
+	g.setColour(juce::Colour::fromRGB(ColorsScheme::addBackground[0], ColorsScheme::addBackground[1], ColorsScheme::addBackground[2]));
+	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);
+	g.drawRoundedRectangle(this->effectArea, this->cornerSizeEffectArea, 5.0f);
 }
 
 void AudioPluginAudioProcessorEditor::selectorResized() {
@@ -117,13 +109,7 @@ void AudioPluginAudioProcessorEditor::selectorResized() {
         widthBox,
         heigthBox);
 
-	for (std::size_t i = 0; i < this->selectEffectBox.size(); i++) {
-		this->selectEffectBox[i].setVisible(true);
-	}
-}
-
-void AudioPluginAudioProcessorEditor::selectorHide() {
-	for (std::size_t i = 0; i < this->selectEffectBox.size(); i++) {
-		this->selectEffectBox[i].setVisible(false);
+    for (auto& it : this->selectEffectBox) {
+	    it.setVisible(true);
 	}
 }

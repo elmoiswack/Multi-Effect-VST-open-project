@@ -6,7 +6,8 @@ enum ReverbIndex {
 	TONE,
 	SIZE,
 	HIGHCUT,
-	LOWCUT
+	LOWCUT,
+	MIX
 };
 
 void AudioPluginAudioProcessorEditor::reverbInit() {
@@ -29,7 +30,10 @@ void AudioPluginAudioProcessorEditor::reverbInit() {
 	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("LowCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, LOWCUT));
 	addAndMakeVisible(*this->reverbSliders[LOWCUT]);
 
-  	for (auto& slider : reverbSliders) {
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, MIX));
+	addAndMakeVisible(*this->reverbSliders[MIX]);
+
+  	for (auto& slider : this->reverbSliders) {
         slider->onValueChange = [this](int index, float value) {
 			//TODO: update index with value
             repaint();
@@ -83,10 +87,10 @@ void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 	textArea.setX(width / 2 - (sliderWidth * 1.8) + (getLocalBounds().getWidth() / 4));
     g.drawText(this->reverbSliders[SIZE]->getName(), textArea, juce::Justification::centred, true);
 	
-	int boxWidth = 100;
+	int boxWidth = 120;
 	int boxHeight = 70;
 	textArea.setX((width / 2) - (boxWidth / 2));
-	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight / 2) - textHeight - 10); //remove magic number
+	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight * 1.5) - textHeight - 10); //remove magic number
     g.drawText("Type", textArea, juce::Justification::centred, true);
 
 	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth);
@@ -95,6 +99,10 @@ void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
     g.drawText(this->reverbSliders[LOWCUT]->getName(), textArea, juce::Justification::centred, true);
+
+	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20);
+	textArea.setY(this->effectArea.getHeight() - textHeight);
+	g.drawText(this->reverbSliders[MIX]->getName(), textArea, juce::Justification::centred, true);
 	
 }
 
@@ -105,11 +113,10 @@ void AudioPluginAudioProcessorEditor::reverbResized() {
     auto height = this->effectArea.getHeight();
 	int sliderWidth = 100;
     int sliderHeight = 100;
-	int boxWidth = 100;
+	int boxWidth = 120;
 	int boxHeight = 70;
 	int boxX = (width / 2) - (boxWidth / 2);
-	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight / 2); 
-
+	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5); 
 
 	int startX = x + (sliderWidth * 1.5);
 	int startY = y + sliderHeight;
@@ -126,18 +133,9 @@ void AudioPluginAudioProcessorEditor::reverbResized() {
 	this->reverbSliders[HIGHCUT]->setBounds(startX, startY, sliderWidth, sliderHeight);
 	this->reverbSliders[LOWCUT]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
-	for (std::size_t i = 0; i < this->reverbSliders.size(); i++) {
-		this->reverbSliders[i]->setVisible(true);
-	}
+	this->reverbSliders[MIX]->setBounds(this->effectArea.getWidth() - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
 	this->reverbType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->reverbType.setVisible(true);
-}
-
-void AudioPluginAudioProcessorEditor::reverbHide() {
-	for (std::size_t i = 0; i < this->reverbSliders.size(); i++) {
-		this->reverbSliders[i]->setVisible(false);
-	}
-
-	this->reverbType.setVisible(false);
+	this->setSlidersVisable(this->reverbSliders, true);
 }

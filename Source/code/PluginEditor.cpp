@@ -34,9 +34,13 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
     for (auto& it : this->reverbSliders)
         it.reset();
 
+    for (auto& it : this->distortionSliders)
+        it.reset();
+
     this->lowSlope.setLookAndFeel(nullptr);
     this->highSlope.setLookAndFeel(nullptr);
     this->reverbType.setLookAndFeel(nullptr);
+    this->distortionType.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -140,25 +144,33 @@ void AudioPluginAudioProcessorEditor::computeView(EffectIndex effect) {
     switch (this->currentSelected)
     {
     case EffectIndex::REVERB:
-        this->reverbHide();
+        this->setSlidersVisable(this->reverbSliders, false);
+        this->reverbType.setVisible(false);
         break ;
     case EffectIndex::DISTORTION:
-        this->distortionHide();
+        this->setSlidersVisable(this->distortionSliders, false);
+        this->distortionType.setVisible(false);
         break ;
     case EffectIndex::DELAY:
-        this->delayHide();
+        //this->setSlidersVisable(this->delaySliders, false);
         break ;
     case EffectIndex::CHORUS:
-        this->chorusHide();
+        this->setSlidersVisable(this->chorusSliders, false);
         break;
     case EffectIndex::EQ:
-        this->eqHide();
+        this->setSlidersVisable(this->eqSliders, false);
+        this->highSlope.setVisible(false);
+        this->lowSlope.setVisible(false);
         break;
     case EffectIndex::ADD:
-        this->selectorHide();
+        for (auto& it : this->selectEffectBox) {
+		    it.setVisible(false);
+	    }
         break;
     default:
-        this->selectorHide();
+        for (auto& it : this->selectEffectBox) {
+		    it.setVisible(false);
+	    }
         break;
     }
 
@@ -259,4 +271,11 @@ void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const
 
     this->drawMoveChainObject = false;
     this->computeView(this->currentSelected);
+}
+
+
+void AudioPluginAudioProcessorEditor::setSlidersVisable(std::vector<std::unique_ptr<CustomSlider>>& container, bool value) {
+    for (auto& it : container) {
+        it->setValue(value);
+    }
 }

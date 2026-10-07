@@ -138,12 +138,3 @@ void AudioPluginAudioProcessorEditor::eqResized() {
 	this->highSlope.setVisible(true);
 
 }
-
-void AudioPluginAudioProcessorEditor::eqHide() {
-	for (std::size_t i = 0; i < this->eqSliders.size(); i++) {
-		this->eqSliders[i]->setVisible(false);
-	}
-
-	this->lowSlope.setVisible(false);
-	this->highSlope.setVisible(false);
-}

@@ -22,7 +22,7 @@ void CustomLAFCombo::drawComboBox(juce::Graphics& g, int width, int height, bool
     g.setColour(box.findColour(box.hasKeyboardFocus(true) ? juce::ComboBox::focusedOutlineColourId : juce::ComboBox::outlineColourId));
     g.drawRoundedRectangle(bounds.reduced(0.5f), cornerRadius, 1.0f);
 
-    juce::Rectangle<float> arrowZone((float) buttonX, (float) buttonY, (float) buttonW, (float) buttonH);
+    juce::Rectangle<float> arrowZone((float)buttonX, (float)buttonY, (float)buttonW, (float)buttonH);
     juce::Path arrow;
     arrow.startNewSubPath(arrowZone.getCentreX() - 3.0f, arrowZone.getCentreY() - 2.0f);
     arrow.lineTo(arrowZone.getCentreX(), arrowZone.getCentreY() + 2.0f);

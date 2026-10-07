@@ -21,7 +21,3 @@ void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 void AudioPluginAudioProcessorEditor::delayResized() {
 
 }
-
-void AudioPluginAudioProcessorEditor::delayHide() {
-
-}

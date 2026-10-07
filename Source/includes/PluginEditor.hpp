@@ -44,32 +44,26 @@ public:
     void initEffectObject(juce::String name, const juce::uint8* color, EffectIndex index);
     void selectorPaint(juce::Graphics& g);
     void selectorResized();
-    void selectorHide();
 
     void reverbInit();
     void reverbPaint(juce::Graphics& g);
     void reverbResized();
-    void reverbHide();
 
     void distortionInit();
     void distortionPaint(juce::Graphics& g);
     void distortionResized();
-    void distortionHide();
 
     void delayInit();
     void delayPaint(juce::Graphics& g);
     void delayResized();
-    void delayHide();
 
     void chorusInit();
     void chorusPaint(juce::Graphics& g);
     void chorusResized();
-    void chorusHide();
 
     void eqInit();
     void eqPaint(juce::Graphics& g);
     void eqResized();
-    void eqHide();
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -80,6 +74,8 @@ public:
 
     void dragChainObject(EffectIndex effect, const juce::MouseEvent& event);
     void swapChainObjects(EffectIndex effect, const juce::MouseEvent& event);
+
+    void setSlidersVisable(std::vector<std::unique_ptr<CustomSlider>>& container, bool value);
 
 private:
     AudioPluginAudioProcessor& processorRef;
@@ -101,6 +97,14 @@ private:
     std::vector<std::unique_ptr<CustomSlider>> reverbSliders;
     juce::ComboBox reverbType;
     CustomLAFCombo reverbLAFCB;
+
+///////////////Distortion params//////////////////////
+    std::vector<std::unique_ptr<CustomSlider>> distortionSliders;
+    juce::ComboBox distortionType;
+    CustomLAFCombo distortionLAFCB;
+
+///////////////Chorus params//////////////////////////
+    std::vector<std::unique_ptr<CustomSlider>> chorusSliders;
 
 ///////////////EQ params///////////////////////////////
     std::vector<std::unique_ptr<CustomSlider>> eqSliders;

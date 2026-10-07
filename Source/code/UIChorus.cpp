@@ -1,27 +1,29 @@
 #include "PluginEditor.hpp"
 
+enum ChorusIndex {
+	DELAY,
+	RATE,
+	DEPTH,
+	SPREAD,
+	FEEDBACK,
+	HIGHCUT,
+	MIX
+};
+
 void AudioPluginAudioProcessorEditor::chorusInit() {
 	
 }
 
 void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
-	float minWidth = 10.f;
-	float maxWidth = 980.f;
-	float minHeight = 120.f;
-	float maxHeight = 570.f;
-	float cornerSize = 20.f;
-
-	auto& bgColor = ColorsScheme::chorusBackground;
-
-	g.setColour(juce::Colour::fromRGB(bgColor[0], bgColor[1], bgColor[2]));
-	g.fillRoundedRectangle(minWidth, minHeight, maxWidth, maxHeight, cornerSize);
-	g.drawRoundedRectangle(minWidth, minHeight, maxWidth, maxHeight, cornerSize, 5.0f);
+	g.setColour(juce::Colour::fromRGB(ColorsScheme::chorusBackground[0], ColorsScheme::chorusBackground[1], ColorsScheme::chorusBackground[2]));
+	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);
+	g.drawRoundedRectangle(this->effectArea, this->cornerSizeEffectArea, 5.0f);
 }
 
 void AudioPluginAudioProcessorEditor::chorusResized() {
 
+	
+
+	this->setSlidersVisable(this->chorusSliders, true);
 }
 
-void AudioPluginAudioProcessorEditor::chorusHide() {
-
-}
