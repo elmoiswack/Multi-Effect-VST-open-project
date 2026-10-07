@@ -275,7 +275,7 @@ void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const
 
 
 void AudioPluginAudioProcessorEditor::setSlidersVisable(std::vector<std::unique_ptr<CustomSlider>>& container, bool value) {
-    for (auto& it : container) {
-        it->setValue(value);
+    for (std::size_t i = 0; i < container.size(); i++) {
+        container[i]->setVisible(value);
     }
 }

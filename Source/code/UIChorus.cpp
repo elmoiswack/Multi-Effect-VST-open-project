@@ -1,7 +1,7 @@
 #include "PluginEditor.hpp"
 
 enum ChorusIndex {
-	DELAY,
+	CHORUSDELAY,
 	RATE,
 	DEPTH,
 	SPREAD,
@@ -22,7 +22,7 @@ void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
 
 void AudioPluginAudioProcessorEditor::chorusResized() {
 
-	
+
 
 	this->setSlidersVisable(this->chorusSliders, true);
 }
