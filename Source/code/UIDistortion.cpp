@@ -130,5 +130,4 @@ void AudioPluginAudioProcessorEditor::distortionResized() {
 	this->distortionType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->distortionType.setVisible(true);
 	this->setSlidersVisable(this->distortionSliders, true);
-
 }
