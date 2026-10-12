@@ -31,16 +31,28 @@ AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
     for (auto& it : this->eqSliders)
         it.reset();
 
+    this->lowSlope.setLookAndFeel(nullptr);
+    this->highSlope.setLookAndFeel(nullptr);
+
     for (auto& it : this->reverbSliders)
         it.reset();
+
+    this->reverbType.setLookAndFeel(nullptr);
 
     for (auto& it : this->distortionSliders)
         it.reset();
 
-    this->lowSlope.setLookAndFeel(nullptr);
-    this->highSlope.setLookAndFeel(nullptr);
-    this->reverbType.setLookAndFeel(nullptr);
     this->distortionType.setLookAndFeel(nullptr);
+   
+    for (auto& it : this->chorusSliders)
+        it.reset();
+
+    for (auto& it : this->delaySliders)
+        it.reset();
+
+    this->delayType.setLookAndFeel(nullptr);
+    this->leftTimeOption.setLookAndFeel(nullptr);
+    this->rightTimeOption.setLookAndFeel(nullptr);
 }
 
 //==============================================================================
@@ -152,7 +164,10 @@ void AudioPluginAudioProcessorEditor::computeView(EffectIndex effect) {
         this->distortionType.setVisible(false);
         break ;
     case EffectIndex::DELAY:
-        //this->setSlidersVisable(this->delaySliders, false);
+        this->setSlidersVisable(this->delaySliders, false);
+        this->delayType.setVisible(false);
+        this->leftTimeOption.setVisible(false);
+        this->rightTimeOption.setVisible(false);
         break ;
     case EffectIndex::CHORUS:
         this->setSlidersVisable(this->chorusSliders, false);

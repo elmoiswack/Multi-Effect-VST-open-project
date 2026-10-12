@@ -68,7 +68,7 @@ void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
 	
 	juce::Rectangle<int> textArea = {startX, startY, textWidth, textHeight};
 	
-	g.setColour(juce::Colours::black);	
+	g.setColour(juce::Colour::fromRGB(ColorsScheme::distortionSecondary[0], ColorsScheme::distortionSecondary[1], ColorsScheme::distortionSecondary[2]));
 	g.setFont(25.f);
 
 	textArea.setY(startY - textHeight);

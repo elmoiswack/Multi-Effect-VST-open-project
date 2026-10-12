@@ -63,11 +63,11 @@ void CustomLAFCombo::setColors(const juce::uint8* primary, const juce::uint8* se
     setColour(juce::ComboBox::backgroundColourId, colorSecondary);
     setColour(juce::ComboBox::outlineColourId, colorPrimary);
     setColour(juce::ComboBox::focusedOutlineColourId, colorPrimary);
-    setColour(juce::ComboBox::textColourId, juce::Colours::white);
+    setColour(juce::ComboBox::textColourId, colorPrimary);
     setColour(juce::ComboBox::arrowColourId, colorPrimary);
 
     setColour(juce::PopupMenu::backgroundColourId, colorSecondary);
     setColour(juce::PopupMenu::highlightedBackgroundColourId, colorPrimary);
     setColour(juce::PopupMenu::highlightedTextColourId, colorSecondary);
-    setColour(juce::PopupMenu::textColourId, juce::Colours::white);
+    setColour(juce::PopupMenu::textColourId, colorPrimary);
 }

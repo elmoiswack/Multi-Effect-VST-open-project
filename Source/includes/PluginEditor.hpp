@@ -106,6 +106,13 @@ private:
 ///////////////Chorus params//////////////////////////
     std::vector<std::unique_ptr<CustomSlider>> chorusSliders;
 
+///////////////Delay params//////////////////////////
+    std::vector<std::unique_ptr<CustomSlider>> delaySliders;
+    juce::ComboBox delayType;
+    juce::ComboBox leftTimeOption;
+    juce::ComboBox rightTimeOption;
+    CustomLAFCombo delayLAFCB;
+
 ///////////////EQ params///////////////////////////////
     std::vector<std::unique_ptr<CustomSlider>> eqSliders;
     juce::ComboBox lowSlope;

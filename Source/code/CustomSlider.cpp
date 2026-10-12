@@ -48,8 +48,10 @@ void CustomSlider::paint(juce::Graphics& g) {
 
     g.setColour(juce::Colour::fromRGB(this->primaryColor[0], this->primaryColor[1], this->primaryColor[2]));
     g.fillEllipse(rx, ry, rw, rw);
+
+    float lineThickness = 2.0f;
     g.setColour(juce::Colour::fromRGB(this->secondaryColor[0], this->secondaryColor[1], this->secondaryColor[2]));
-    g.drawEllipse(rx, ry, rw, rw, 1.0f);
+    g.drawEllipse(rx, ry, rw, rw, lineThickness);
 
     juce::Path p;
     float pointerLength  = radius * 0.5f;
