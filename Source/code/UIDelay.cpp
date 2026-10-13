@@ -1,46 +1,28 @@
 #include "PluginEditor.hpp"
 
-enum DelayIndex {
-	LEFTDELAY,
-	LEFTFEEDBACK,
-	RIGHTDELAY,
-	RIGHTFEEDBACK,
-	LOWCUT,
-	HIGHCUT,
-	MIX
-};
-
 void AudioPluginAudioProcessorEditor::delayInit() {
 	this->delaySliders.reserve(7);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Left", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, LEFTDELAY));
-	addAndMakeVisible(*this->delaySliders[LEFTDELAY]);
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Left", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::LEFTDELAY)));
+	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::LEFTDELAY)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, LEFTFEEDBACK));
-	addAndMakeVisible(*this->delaySliders[LEFTFEEDBACK]);
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::LEFTFEEDBACK)));
+	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::LEFTFEEDBACK)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Right", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, RIGHTDELAY));
-	addAndMakeVisible(*this->delaySliders[RIGHTDELAY]);
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Right", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::RIGHTDELAY)));
+	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]);
 	
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, RIGHTFEEDBACK));
-	addAndMakeVisible(*this->delaySliders[RIGHTFEEDBACK]);
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::RIGHTFEEDBACK)));
+	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Lowcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, LOWCUT));
-	addAndMakeVisible(*this->delaySliders[LOWCUT]);
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Lowcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::LOWCUT)));
+	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Highcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, HIGHCUT));
-	addAndMakeVisible(*this->delaySliders[HIGHCUT]);
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Highcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::HIGHCUT)));
+	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, MIX));
-	addAndMakeVisible(*this->delaySliders[MIX]);
-
-	for (auto& slider : this->chorusSliders) {
-        slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
-			//TODO: If index == LEFTDELAY || RIGHTDELAY en sync staat aan, update beiden.
-            repaint();
-        };
-    }
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::MIX)));
+	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::MIX)]);
 
 	this->delayLAFCB.setColors(ColorsScheme::delayPrimary, ColorsScheme::delaySecondary);
 	this->delayLAFCB.setFontSize(25.0f);
@@ -53,23 +35,40 @@ void AudioPluginAudioProcessorEditor::delayInit() {
 	this->delayType.addItem("Ping-Pong", 3);
 	this->delayType.setSelectedId(1);
 
-	this->leftTimeOption.setLookAndFeel(&this->delayLAFCB);
-	addAndMakeVisible(this->leftTimeOption);
-	this->leftTimeOption.addItem("Free",  1);
-	this->leftTimeOption.addItem("4th Note", 2);
-	this->leftTimeOption.addItem("8th Note", 3);
-	this->leftTimeOption.addItem("16th Note", 4);
-	this->leftTimeOption.setSelectedId(1);
+	for (auto* box : { &this->leftTimeOption, &this->rightTimeOption }) {
+		box->setLookAndFeel(&this->delayLAFCB);
+		addAndMakeVisible(box);
+		box->addItem("Free",  1);
+		box->addItem("4th Note", 2);
+		box->addItem("8th Note", 3);
+		box->addItem("16th Note", 4);
+		box->setSelectedId(1);
+	}
 
-	this->rightTimeOption.setLookAndFeel(&this->delayLAFCB);
-	addAndMakeVisible(this->rightTimeOption);
-	this->rightTimeOption.addItem("Free",  1);
-	this->rightTimeOption.addItem("4th Note", 2);
-	this->rightTimeOption.addItem("8th Note", 3);
-	this->rightTimeOption.addItem("16th Note", 4);
-	this->rightTimeOption.setSelectedId(1);
+	delayHandler();
+}
 
-	//TODO: make an updater for all ComboBoxes
+void AudioPluginAudioProcessorEditor::delayHandler() {
+	for (auto& slider : this->chorusSliders) {
+        slider->onValueChange = [this](int index, float value) {
+			//TODO: update index with value
+			//TODO: If index == DelayIndex::LEFTDELAY || RIGHTDELAY en sync staat aan, update beiden.
+            repaint();
+        };
+    }
+
+	this->delayType.onChange = [this]() {
+		int selected = this->delayType.getSelectedId();
+		std::cout << "hahaha" << std::endl;
+	};
+
+	this->leftTimeOption.onChange = [this]() {
+		
+	};
+
+	this->rightTimeOption.onChange = [this]() {
+		
+	};
 }
 
 void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
@@ -94,28 +93,28 @@ void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 	g.setFont(25.f);
 
 	textArea.setY(startY - textHeight);
-    g.drawText(this->delaySliders[LEFTDELAY]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LEFTDELAY)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->delaySliders[LEFTFEEDBACK]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LEFTFEEDBACK)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 - (sliderWidth * 1.8));
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
-    g.drawText(this->delaySliders[RIGHTDELAY]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 - (sliderWidth * 1.8) + (getLocalBounds().getWidth() / 4));
-    g.drawText(this->delaySliders[RIGHTFEEDBACK]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth);
 	textArea.setY(startY - textHeight);
-    g.drawText(this->delaySliders[LOWCUT]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->delaySliders[HIGHCUT]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20);
 	textArea.setY(this->effectArea.getHeight() - textHeight);
-	g.drawText(this->delaySliders[MIX]->getName(), textArea, juce::Justification::centred, true);
+	g.drawText(this->delaySliders[static_cast<int>(DelayIndex::MIX)]->getName(), textArea, juce::Justification::centred, true);
 
 	int boxWidth = 120;
 	int boxHeight = 70;
@@ -144,20 +143,20 @@ void AudioPluginAudioProcessorEditor::delayResized() {
 
 	int startX = x + (sliderWidth * 1.5);
 	int startY = y + sliderHeight;
-	this->delaySliders[LEFTDELAY]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->delaySliders[LEFTFEEDBACK]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::LEFTDELAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::LEFTFEEDBACK)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
 	startX = width / 2 - (sliderWidth * 1.8);
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
-	this->delaySliders[LOWCUT]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->delaySliders[HIGHCUT]->setBounds(startX + (getLocalBounds().getWidth() / 4), startY, sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]->setBounds(startX + (getLocalBounds().getWidth() / 4), startY, sliderWidth, sliderHeight);
 
 	startX = width - (sliderWidth * 1.5) - sliderWidth;
 	startY = y + sliderHeight;
-	this->delaySliders[RIGHTDELAY]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->delaySliders[RIGHTFEEDBACK]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
-	this->delaySliders[MIX]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::MIX)]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
 	int boxX = x + (sliderWidth * 1.5);
 	int boxY = startY + (sliderHeight * 2.5) + (boxHeight / 2);

@@ -1,40 +1,24 @@
 #include "PluginEditor.hpp"
 
-enum DistortionIndex {
-	DRIVE,
-	TONE,
-	OUTPUTGAIN,
-	HIGHCUT,
-	LOWCUT,
-	MIX
-};
-
 void AudioPluginAudioProcessorEditor::distortionInit() {
 	this->distortionSliders.reserve(6);
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Drive", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, DRIVE));
-	addAndMakeVisible(*this->distortionSliders[DRIVE]);
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Drive", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::DRIVE)));
+	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::DRIVE)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Tone", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, TONE));
-	addAndMakeVisible(*this->distortionSliders[TONE]);
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Tone", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::TONE)));
+	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::TONE)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("OutputGain", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, OUTPUTGAIN));
-	addAndMakeVisible(*this->distortionSliders[OUTPUTGAIN]);
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("OutputGain", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::OUTPUTGAIN)));
+	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::OUTPUTGAIN)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Highcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, HIGHCUT));
-	addAndMakeVisible(*this->distortionSliders[HIGHCUT]);
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Highcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::HIGHCUT)));
+	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::HIGHCUT)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Lowcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, LOWCUT));
-	addAndMakeVisible(*this->distortionSliders[LOWCUT]);
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Lowcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::LOWCUT)));
+	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::LOWCUT)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, MIX));
-	addAndMakeVisible(*this->distortionSliders[MIX]);
-
-	for (auto& slider : this->distortionSliders) {
-        slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
-            repaint();
-        };
-    }
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::MIX)));
+	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::MIX)]);
 
 	this->distortionLAFCB.setColors(ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary);
 	this->distortionLAFCB.setFontSize(20.0f);
@@ -47,6 +31,21 @@ void AudioPluginAudioProcessorEditor::distortionInit() {
 	this->distortionType.addItem("Saturation", 3);
 	this->distortionType.addItem("Fuzz", 4);
 	this->distortionType.setSelectedId(1);
+
+	distortionHandler();
+}
+
+void AudioPluginAudioProcessorEditor::distortionHandler() {
+	for (auto& slider : this->distortionSliders) {
+        slider->onValueChange = [this](int index, float value) {
+			//TODO: update index with value
+            repaint();
+        };
+    }
+
+	this->distortionType.onChange = [this]() {
+		int selected = this->distortionType.getSelectedId();
+	};
 }
 
 void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
@@ -72,10 +71,10 @@ void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
 	g.setFont(25.f);
 
 	textArea.setY(startY - textHeight);
-    g.drawText(this->distortionSliders[DRIVE]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::DRIVE)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->distortionSliders[TONE]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::TONE)]->getName(), textArea, juce::Justification::centred, true);
 
 	int boxWidth = 120;
 	int boxHeight = 70;
@@ -85,18 +84,18 @@ void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
 
 	textArea.setX(width / 2 - (sliderWidth / 2) - textOffestX);
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
-	g.drawText(this->distortionSliders[OUTPUTGAIN]->getName(), textArea, juce::Justification::centred, true);
+	g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::OUTPUTGAIN)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth - textOffestX);
 	textArea.setY(startY - textHeight);
-    g.drawText(this->distortionSliders[HIGHCUT]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->distortionSliders[LOWCUT]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20 - textOffestX);
 	textArea.setY(this->effectArea.getHeight() - textHeight);
-	g.drawText(this->distortionSliders[MIX]->getName(), textArea, juce::Justification::centred, true);
+	g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::MIX)]->getName(), textArea, juce::Justification::centred, true);
 }
 
 void AudioPluginAudioProcessorEditor::distortionResized() {
@@ -113,19 +112,19 @@ void AudioPluginAudioProcessorEditor::distortionResized() {
 
 	int startX = x + (sliderWidth * 1.5);
 	int startY = y + sliderHeight;
-	this->distortionSliders[DRIVE]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->distortionSliders[TONE]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::DRIVE)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::TONE)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
 	startX = width / 2 - (sliderWidth / 2);
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
-	this->distortionSliders[OUTPUTGAIN]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::OUTPUTGAIN)]->setBounds(startX, startY, sliderWidth, sliderHeight);
 
 	startX = width - (sliderWidth * 1.5) - sliderWidth;
 	startY = y + sliderHeight;
-	this->distortionSliders[HIGHCUT]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->distortionSliders[LOWCUT]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::HIGHCUT)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::LOWCUT)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
-	this->distortionSliders[MIX]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::MIX)]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
 	this->distortionType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->distortionType.setVisible(true);

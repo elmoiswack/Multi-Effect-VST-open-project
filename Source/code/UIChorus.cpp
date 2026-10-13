@@ -1,39 +1,33 @@
 #include "PluginEditor.hpp"
 
-enum ChorusIndex {
-	CHORUSDELAY,
-	RATE,
-	DEPTH,
-	WIDTH,
-	FEEDBACK,
-	HIGHCUT,
-	MIX
-};
-
 void AudioPluginAudioProcessorEditor::chorusInit() {
 	this->chorusSliders.reserve(7);
 
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Delay", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, CHORUSDELAY));
-	addAndMakeVisible(*this->chorusSliders[CHORUSDELAY]);
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Delay", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::DELAY)));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::DELAY)]);
 
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Rate", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, RATE));
-	addAndMakeVisible(*this->chorusSliders[RATE]);
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Rate", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::RATE)));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::RATE)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Depth", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, DEPTH));
-	addAndMakeVisible(*this->chorusSliders[DEPTH]);
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Depth", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::DEPTH)));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::DEPTH)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Width", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, WIDTH));
-	addAndMakeVisible(*this->chorusSliders[WIDTH]);
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Width", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::WIDTH)));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::WIDTH)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, FEEDBACK));
-	addAndMakeVisible(*this->chorusSliders[FEEDBACK]);
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::FEEDBACK)));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::FEEDBACK)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("HighCut", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, HIGHCUT));
-	addAndMakeVisible(*this->chorusSliders[HIGHCUT]);
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("HighCut", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::HIGHCUT)));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::HIGHCUT)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, MIX));
-	addAndMakeVisible(*this->chorusSliders[MIX]);
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::MIX)));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::MIX)]);
 
+	chorusHandler();
+}
+
+void AudioPluginAudioProcessorEditor::chorusHandler() {
 	for (auto& slider : this->chorusSliders) {
         slider->onValueChange = [this](int index, float value) {
 			//TODO: update index with value
@@ -65,28 +59,28 @@ void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
 	g.setFont(25.f);
 
 	textArea.setY(startY - textHeight);
-    g.drawText(this->chorusSliders[CHORUSDELAY]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::DELAY)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->chorusSliders[RATE]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::RATE)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 - (sliderWidth * 1.5) - textOffestX);
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
-    g.drawText(this->chorusSliders[DEPTH]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::DEPTH)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 + (sliderWidth * 0.5) - textOffestX);
-    g.drawText(this->chorusSliders[WIDTH]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::WIDTH)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth - textOffestX);
 	textArea.setY(startY - textHeight);
-    g.drawText(this->chorusSliders[FEEDBACK]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::FEEDBACK)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->chorusSliders[HIGHCUT]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20 - textOffestX);
 	textArea.setY(this->effectArea.getHeight() - textHeight);
-	g.drawText(this->chorusSliders[MIX]->getName(), textArea, juce::Justification::centred, true);
+	g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::MIX)]->getName(), textArea, juce::Justification::centred, true);
 }
 
 void AudioPluginAudioProcessorEditor::chorusResized() {
@@ -99,21 +93,21 @@ void AudioPluginAudioProcessorEditor::chorusResized() {
 
 	int startX = x + (sliderWidth * 1.5);
 	int startY = y + sliderHeight;
-	this->chorusSliders[CHORUSDELAY]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->chorusSliders[RATE]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->chorusSliders[static_cast<int>(ChorusIndex::DELAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->chorusSliders[static_cast<int>(ChorusIndex::RATE)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
 	startX = width / 2 - (sliderWidth * 1.5);
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
-	this->chorusSliders[DEPTH]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->chorusSliders[static_cast<int>(ChorusIndex::DEPTH)]->setBounds(startX, startY, sliderWidth, sliderHeight);
 	startX = width / 2 + (sliderWidth * 0.5);
-	this->chorusSliders[WIDTH]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->chorusSliders[static_cast<int>(ChorusIndex::WIDTH)]->setBounds(startX, startY, sliderWidth, sliderHeight);
 
 	startX = width - (sliderWidth * 1.5) - sliderWidth;
 	startY = y + sliderHeight;
-	this->chorusSliders[FEEDBACK]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->chorusSliders[HIGHCUT]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->chorusSliders[static_cast<int>(ChorusIndex::FEEDBACK)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->chorusSliders[static_cast<int>(ChorusIndex::HIGHCUT)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
-	this->chorusSliders[MIX]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
+	this->chorusSliders[static_cast<int>(ChorusIndex::MIX)]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
 	this->setSlidersVisable(this->chorusSliders, true);
 }

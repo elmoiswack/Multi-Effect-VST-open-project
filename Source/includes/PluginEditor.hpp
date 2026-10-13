@@ -7,6 +7,57 @@
 #include <vector>
 #include <algorithm>
 
+enum class DelayIndex {
+	LEFTDELAY,
+	LEFTFEEDBACK,
+	RIGHTDELAY,
+	RIGHTFEEDBACK,
+	LOWCUT,
+	HIGHCUT,
+	MIX
+};
+
+enum class DistortionIndex {
+	DRIVE,
+	TONE,
+	OUTPUTGAIN,
+	HIGHCUT,
+	LOWCUT,
+	MIX
+};
+
+enum class ChorusIndex {
+	DELAY,
+	RATE,
+	DEPTH,
+	WIDTH,
+	FEEDBACK,
+	HIGHCUT,
+	MIX
+};
+
+enum class eqIndex {
+	LOWFREQ,
+	LOWGAIN,
+	LOWQ,
+	MIDFREQ,
+	MIDGAIN,
+	MIDQ,
+	HIGHFREQ,
+	HIGHGAIN,
+	HIGHQ,	
+};
+
+enum class ReverbIndex {
+	DECAY,
+	PREDELAY,
+	TONE,
+	SIZE,
+	HIGHCUT,
+	LOWCUT,
+	MIX
+};
+
 struct ColorsScheme {
     inline static constexpr juce::uint8 reverbPrimary[3] = {255, 255, 100};
 	inline static constexpr juce::uint8 reverbSecondary[3] = {251, 156, 14};
@@ -48,22 +99,27 @@ public:
     void reverbInit();
     void reverbPaint(juce::Graphics& g);
     void reverbResized();
+    void reverbHandler();
 
     void distortionInit();
     void distortionPaint(juce::Graphics& g);
     void distortionResized();
+    void distortionHandler();
 
     void delayInit();
     void delayPaint(juce::Graphics& g);
     void delayResized();
+    void delayHandler();
 
     void chorusInit();
     void chorusPaint(juce::Graphics& g);
     void chorusResized();
+    void chorusHandler();
 
     void eqInit();
     void eqPaint(juce::Graphics& g);
     void eqResized();
+    void eqHandler();
 
     //==============================================================================
     void paint (juce::Graphics&) override;

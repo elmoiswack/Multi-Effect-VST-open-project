@@ -1,57 +1,39 @@
 #include "PluginEditor.hpp"
 
-enum eqIndex {
-	LOWFREQ,
-	LOWGAIN,
-	LOWQ,
-	MIDFREQ,
-	MIDGAIN,
-	MIDQ,
-	HIGHFREQ,
-	HIGHGAIN,
-	HIGHQ,	
-};
-
 void AudioPluginAudioProcessorEditor::eqInit() {
 	this->eqSliders.reserve(9);
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, LOWFREQ));
-	addAndMakeVisible(*this->eqSliders[LOWFREQ]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::LOWFREQ)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::LOWFREQ)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, LOWGAIN));
-	addAndMakeVisible(*this->eqSliders[LOWGAIN]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::LOWGAIN)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::LOWGAIN)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, LOWQ));
-	addAndMakeVisible(*this->eqSliders[LOWQ]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::LOWQ)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::LOWQ)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, MIDFREQ));
-	addAndMakeVisible(*this->eqSliders[MIDFREQ]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::MIDFREQ)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::MIDFREQ)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, MIDGAIN));
-	addAndMakeVisible(*this->eqSliders[MIDGAIN]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::MIDGAIN)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::MIDGAIN)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, MIDQ));
-	addAndMakeVisible(*this->eqSliders[MIDQ]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::MIDQ)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::MIDQ)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, HIGHFREQ));
-	addAndMakeVisible(*this->eqSliders[HIGHFREQ]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Frequency", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::HIGHFREQ)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::HIGHFREQ)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, HIGHGAIN));
-	addAndMakeVisible(*this->eqSliders[HIGHGAIN]);
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Gain", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::HIGHGAIN)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::HIGHGAIN)]);
 
-	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, HIGHQ));
-	addAndMakeVisible(*this->eqSliders[HIGHQ]);
-
-  	for (auto& slider : eqSliders) {
-        slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
-            repaint();
-        };
-    }
+	this->eqSliders.emplace_back(std::make_unique<CustomSlider>("Quality", ColorsScheme::eqPrimary, ColorsScheme::eqSecondary, static_cast<int>(eqIndex::HIGHQ)));
+	addAndMakeVisible(*this->eqSliders[static_cast<int>(eqIndex::HIGHQ)]);
 
 	this->eqLAFCB.setColors(ColorsScheme::eqPrimary, ColorsScheme::eqSecondary);
 	this->eqLAFCB.setFontSize(14.0f);
 	this->eqLAFCB.setCornerRadius(6.0f);
-	for (auto* box : { &lowSlope, &highSlope }) {
+
+	for (auto* box : { &this->lowSlope, &this->highSlope }) {
 		box->setLookAndFeel(&this->eqLAFCB);
 		addAndMakeVisible(box);
 		box->addItem("6 dB",  1);
@@ -60,6 +42,25 @@ void AudioPluginAudioProcessorEditor::eqInit() {
 		box->addItem("36 dB", 4);
 		box->setSelectedId(1);
 	}
+
+	eqHandler();
+}
+
+void AudioPluginAudioProcessorEditor::eqHandler() {
+  	for (auto& slider : eqSliders) {
+        slider->onValueChange = [this](int index, float value) {
+			//TODO: update index with value
+            repaint();
+        };
+    }
+
+	this->lowSlope.onChange = [this]() {
+		int selected = this->lowSlope.getSelectedId();
+	};
+
+	this->highSlope.onChange = [this]() {
+		int selected = this->lowSlope.getSelectedId();
+	};
 }
 
 void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
@@ -138,3 +139,4 @@ void AudioPluginAudioProcessorEditor::eqResized() {
 	this->highSlope.setVisible(true);
 
 }
+

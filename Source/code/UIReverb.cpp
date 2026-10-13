@@ -1,44 +1,28 @@
 #include "PluginEditor.hpp"
 
-enum ReverbIndex {
-	DECAY,
-	PREDELAY,
-	TONE,
-	SIZE,
-	HIGHCUT,
-	LOWCUT,
-	MIX
-};
 
 void AudioPluginAudioProcessorEditor::reverbInit() {
-	this->reverbSliders.reserve(6);
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Decay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, DECAY));
-	addAndMakeVisible(*this->reverbSliders[DECAY]);
+	this->reverbSliders.reserve(7);
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Decay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::DECAY)));
+	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::DECAY)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("PreDelay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, PREDELAY));
-	addAndMakeVisible(*this->reverbSliders[PREDELAY]);
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("PreDelay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::PREDELAY)));
+	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::PREDELAY)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Tone", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, TONE));
-	addAndMakeVisible(*this->reverbSliders[TONE]);
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Tone", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::TONE)));
+	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::TONE)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Size", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, SIZE));
-	addAndMakeVisible(*this->reverbSliders[SIZE]);
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Size", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::SIZE)));
+	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::SIZE)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("HighCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, HIGHCUT));
-	addAndMakeVisible(*this->reverbSliders[HIGHCUT]);
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("HighCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::HIGHCUT)));
+	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::HIGHCUT)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("LowCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, LOWCUT));
-	addAndMakeVisible(*this->reverbSliders[LOWCUT]);
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("LowCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::LOWCUT)));
+	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, MIX));
-	addAndMakeVisible(*this->reverbSliders[MIX]);
-
-  	for (auto& slider : this->reverbSliders) {
-        slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
-            repaint();
-        };
-    }
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::MIX)));
+	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]);
 
 	this->reverbLAFCB.setColors(ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary);
 	this->reverbLAFCB.setFontSize(25.0f);
@@ -53,6 +37,18 @@ void AudioPluginAudioProcessorEditor::reverbInit() {
 
 }
 
+void AudioPluginAudioProcessorEditor::reverbHandler() {
+	for (auto& slider : this->reverbSliders) {
+        slider->onValueChange = [this](int index, float value) {
+			//TODO: update index with value
+            repaint();
+        };
+    }
+
+	this->reverbType.onChange = [this]() {
+		int selected = this->reverbType.getSelectedId();
+	};
+}
 void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::reverbBackground[0], ColorsScheme::reverbBackground[1], ColorsScheme::reverbBackground[2]));
 	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);
@@ -75,17 +71,17 @@ void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 	g.setFont(25.f);
 
 	textArea.setY(startY - textHeight);
-    g.drawText(this->reverbSliders[DECAY]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::DECAY)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->reverbSliders[PREDELAY]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::PREDELAY)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 - (sliderWidth * 1.8));
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
-    g.drawText(this->reverbSliders[TONE]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::TONE)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 - (sliderWidth * 1.8) + (getLocalBounds().getWidth() / 4));
-    g.drawText(this->reverbSliders[SIZE]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::SIZE)]->getName(), textArea, juce::Justification::centred, true);
 	
 	int boxWidth = 120;
 	int boxHeight = 70;
@@ -95,14 +91,14 @@ void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 
 	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth);
 	textArea.setY(startY - textHeight);
-    g.drawText(this->reverbSliders[HIGHCUT]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->reverbSliders[LOWCUT]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20);
 	textArea.setY(this->effectArea.getHeight() - textHeight);
-	g.drawText(this->reverbSliders[MIX]->getName(), textArea, juce::Justification::centred, true);
+	g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]->getName(), textArea, juce::Justification::centred, true);
 	
 }
 
@@ -120,20 +116,20 @@ void AudioPluginAudioProcessorEditor::reverbResized() {
 
 	int startX = x + (sliderWidth * 1.5);
 	int startY = y + sliderHeight;
-	this->reverbSliders[DECAY]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->reverbSliders[PREDELAY]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::DECAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::PREDELAY)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
 	startX = width / 2 - (sliderWidth * 1.8);
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
-	this->reverbSliders[TONE]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->reverbSliders[SIZE]->setBounds(startX + (getLocalBounds().getWidth() / 4), startY, sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::TONE)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::SIZE)]->setBounds(startX + (getLocalBounds().getWidth() / 4), startY, sliderWidth, sliderHeight);
 
 	startX = width - (sliderWidth * 1.5) - sliderWidth;
 	startY = y + sliderHeight;
-	this->reverbSliders[HIGHCUT]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->reverbSliders[LOWCUT]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::HIGHCUT)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
-	this->reverbSliders[MIX]->setBounds(this->effectArea.getWidth() - sliderWidth - 20, height, sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]->setBounds(this->effectArea.getWidth() - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
 	this->reverbType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->reverbType.setVisible(true);
