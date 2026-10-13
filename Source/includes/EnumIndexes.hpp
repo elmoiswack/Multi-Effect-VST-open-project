@@ -1,10 +1,10 @@
-enum class DelayIndex {
-	LEFTDELAY,
-	LEFTFEEDBACK,
-	RIGHTDELAY,
-	RIGHTFEEDBACK,
-	LOWCUT,
+enum class ReverbIndex {
+	DECAY,
+	PREDELAY,
+	TONE,
+	SIZE,
 	HIGHCUT,
+	LOWCUT,
 	MIX
 };
 
@@ -14,6 +14,16 @@ enum class DistortionIndex {
 	OUTPUTGAIN,
 	HIGHCUT,
 	LOWCUT,
+	MIX
+};
+
+enum class DelayIndex {
+	LEFTDELAY,
+	LEFTFEEDBACK,
+	RIGHTDELAY,
+	RIGHTFEEDBACK,
+	LOWCUT,
+	HIGHCUT,
 	MIX
 };
 
@@ -39,12 +49,3 @@ enum class eqIndex {
 	HIGHQ,	
 };
 
-enum class ReverbIndex {
-	DECAY,
-	PREDELAY,
-	TONE,
-	SIZE,
-	HIGHCUT,
-	LOWCUT,
-	MIX
-};

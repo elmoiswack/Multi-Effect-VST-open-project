@@ -52,24 +52,68 @@ void AudioPluginAudioProcessorEditor::delayInit() {
 void AudioPluginAudioProcessorEditor::delayHandler() {
 	for (auto& slider : this->chorusSliders) {
         slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
-			//TODO: If index == DelayIndex::LEFTDELAY || RIGHTDELAY en sync staat aan, update beiden.
+			juce::String sliderId = this->getDelayId(index);
+			std::cout << sliderId << ": " << value << std::endl;
+
+
+			if ((index == static_cast<int>(DelayIndex::LEFTDELAY) || index == static_cast<int>(DelayIndex::RIGHTDELAY)) &&
+				delayType.getSelectedId() == 2) { //TODO: enum for ComboBoxes
+				//TODO: update left and right
+			}
+
             repaint();
         };
     }
 
 	this->delayType.onChange = [this]() {
+		juce::String comboId = "delay.type";
 		int selected = this->delayType.getSelectedId();
 	};
 
 	this->leftTimeOption.onChange = [this]() {
-		
+		juce::String comboId = "delay.left.option";
+		int selected = this->leftTimeOption.getSelectedId();
 	};
 
 	this->rightTimeOption.onChange = [this]() {
-		
+		juce::String comboId = "delay.right.option";
+		int selected = this->rightTimeOption.getSelectedId();
 	};
 }
+
+juce::String AudioPluginAudioProcessorEditor::getDelayId(int index) {
+	juce::String id = "delay.";
+
+	switch (index)
+	{
+	case static_cast<int>(DelayIndex::LEFTDELAY):
+		id += "left.time";
+		break;
+	case static_cast<int>(DelayIndex::LEFTFEEDBACK):
+		id += "left.feedback";
+		break;
+	case static_cast<int>(DelayIndex::RIGHTDELAY):
+		id += "right.time";
+		break;
+	case static_cast<int>(DelayIndex::RIGHTFEEDBACK):
+		id += "right.feedback";
+		break;
+	case static_cast<int>(DelayIndex::HIGHCUT):
+		id += "highcut";
+		break;
+	case static_cast<int>(DelayIndex::LOWCUT):
+		id += "lowcut";
+		break;	
+	case static_cast<int>(DelayIndex::MIX):
+		id += "mix";
+		break;	
+	default:
+		break;
+	}
+
+	return id;
+}
+
 
 void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::delayBackground[0], ColorsScheme::delayBackground[1], ColorsScheme::delayBackground[2]));

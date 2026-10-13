@@ -39,14 +39,47 @@ void AudioPluginAudioProcessorEditor::distortionInit() {
 void AudioPluginAudioProcessorEditor::distortionHandler() {
 	for (auto& slider : this->distortionSliders) {
         slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
+			juce::String sliderId = this->getDistortionId(index);
+			std::cout << sliderId << ": " << value << std::endl;
+
             repaint();
         };
     }
 
 	this->distortionType.onChange = [this]() {
+		juce::String comboId = "distortion.type";
 		int selected = this->distortionType.getSelectedId();
 	};
+}
+
+juce::String AudioPluginAudioProcessorEditor::getDistortionId(int index) {
+	juce::String id = "distortion.";
+
+	switch (index)
+	{
+	case static_cast<int>(DistortionIndex::DRIVE):
+		id += "drive";
+		break;
+	case static_cast<int>(DistortionIndex::TONE):
+		id += "tone";
+		break;
+	case static_cast<int>(DistortionIndex::OUTPUTGAIN):
+		id += "outputgain";
+		break;
+	case static_cast<int>(DistortionIndex::HIGHCUT):
+		id += "highcut";
+		break;
+	case static_cast<int>(DistortionIndex::LOWCUT):
+		id += "lowcut";
+		break;
+	case static_cast<int>(DistortionIndex::MIX):
+		id += "mix";
+		break;	
+	default:
+		break;
+	}
+
+	return id;
 }
 
 void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {

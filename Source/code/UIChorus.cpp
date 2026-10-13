@@ -31,11 +31,47 @@ void AudioPluginAudioProcessorEditor::chorusInit() {
 void AudioPluginAudioProcessorEditor::chorusHandler() {
 	for (auto& slider : this->chorusSliders) {
         slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
+			juce::String sliderId = this->getChorusId(index);
+			std::cout << sliderId << ": " << value << std::endl;
+			
             repaint();
         };
     }
 }
+
+juce::String AudioPluginAudioProcessorEditor::getChorusId(int index) {
+	juce::String id = "chorus.";
+
+	switch (index)
+	{
+	case static_cast<int>(ChorusIndex::DELAY):
+		id += "delay";
+		break;
+	case static_cast<int>(ChorusIndex::RATE):
+		id += "rate";
+		break;
+	case static_cast<int>(ChorusIndex::DEPTH):
+		id += "depth";
+		break;
+	case static_cast<int>(ChorusIndex::WIDTH):
+		id += "width";
+		break;
+	case static_cast<int>(ChorusIndex::FEEDBACK):
+		id += "feedback";
+		break;
+	case static_cast<int>(ChorusIndex::HIGHCUT):
+		id += "highcut";
+		break;	
+	case static_cast<int>(ChorusIndex::MIX):
+		id += "mix";
+		break;	
+	default:
+		break;
+	}
+
+	return id;
+}
+
 
 void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::chorusBackground[0], ColorsScheme::chorusBackground[1], ColorsScheme::chorusBackground[2]));

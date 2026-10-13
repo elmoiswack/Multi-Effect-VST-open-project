@@ -77,9 +77,6 @@ void CustomSlider::mouseDrag(const juce::MouseEvent& event) {
 
 void CustomSlider::setValue(float newValue) {
     newValue = juce::jlimit(0.0f, 1.0f, newValue);
-    if (newValue == this->normalisedValue)
-        return;
-
     this->normalisedValue = newValue;
     repaint();
 

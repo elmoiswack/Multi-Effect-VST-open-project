@@ -49,26 +49,35 @@ public:
     void reverbPaint(juce::Graphics& g);
     void reverbResized();
     void reverbHandler();
+    juce::String getReverbId(int index);
+
 
     void distortionInit();
     void distortionPaint(juce::Graphics& g);
     void distortionResized();
     void distortionHandler();
+    juce::String getDistortionId(int index);
+
 
     void delayInit();
     void delayPaint(juce::Graphics& g);
     void delayResized();
     void delayHandler();
+    juce::String getDelayId(int index);
+
 
     void chorusInit();
     void chorusPaint(juce::Graphics& g);
     void chorusResized();
     void chorusHandler();
+    juce::String getChorusId(int index);
 
     void eqInit();
     void eqPaint(juce::Graphics& g);
     void eqResized();
     void eqHandler();
+    juce::String getEQId(int index);
+
 
     //==============================================================================
     void paint (juce::Graphics&) override;

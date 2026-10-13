@@ -50,18 +50,62 @@ void AudioPluginAudioProcessorEditor::eqInit() {
 void AudioPluginAudioProcessorEditor::eqHandler() {
   	for (auto& slider : eqSliders) {
         slider->onValueChange = [this](int index, float value) {
-			//TODO: update index with value
+			juce::String sliderId = this->getEQId(index);
+			std::cout << sliderId << ": " << value << std::endl;
+
+
             repaint();
         };
     }
 
 	this->lowSlope.onChange = [this]() {
+		juce::String comboId = "eq.low.slope";
 		int selected = this->lowSlope.getSelectedId();
 	};
 
 	this->highSlope.onChange = [this]() {
+		juce::String comboId = "eq.high.slope";
 		int selected = this->lowSlope.getSelectedId();
 	};
+}
+
+juce::String AudioPluginAudioProcessorEditor::getEQId(int index) {
+	juce::String id = "eq.";
+
+	switch (index)
+	{
+	case static_cast<int>(eqIndex::LOWFREQ):
+		id += "low.frequency";
+		break;
+	case static_cast<int>(eqIndex::LOWGAIN):
+		id += "low.gain";
+		break;
+	case static_cast<int>(eqIndex::LOWQ):
+		id += "low.quality";
+		break;
+	case static_cast<int>(eqIndex::MIDFREQ):
+		id += "mid.frequency";
+		break;
+	case static_cast<int>(eqIndex::MIDGAIN):
+		id += "mid.gain";
+		break;
+	case static_cast<int>(eqIndex::MIDQ):
+		id += "mid.quality";
+		break;
+	case static_cast<int>(eqIndex::HIGHFREQ):
+		id += "high.frequency";
+		break;
+	case static_cast<int>(eqIndex::HIGHGAIN):
+		id += "high.gain";
+		break;
+	case static_cast<int>(eqIndex::HIGHQ):
+		id += "high.quality";
+		break;
+	default:
+		break;
+	}
+
+	return id;
 }
 
 void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
