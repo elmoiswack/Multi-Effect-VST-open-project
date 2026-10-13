@@ -1,4 +1,5 @@
 #include "PluginEditor.hpp"
+#include "EnumIndexes.hpp"
 
 void AudioPluginAudioProcessorEditor::eqInit() {
 	this->eqSliders.reserve(9);

@@ -1,5 +1,5 @@
 #include "PluginEditor.hpp"
-
+#include "EnumIndexes.hpp"
 
 void AudioPluginAudioProcessorEditor::reverbInit() {
 	this->reverbSliders.reserve(7);

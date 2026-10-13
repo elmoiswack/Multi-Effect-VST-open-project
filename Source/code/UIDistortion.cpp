@@ -1,4 +1,5 @@
 #include "PluginEditor.hpp"
+#include "EnumIndexes.hpp"
 
 void AudioPluginAudioProcessorEditor::distortionInit() {
 	this->distortionSliders.reserve(6);

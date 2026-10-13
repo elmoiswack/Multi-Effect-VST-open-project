@@ -1,4 +1,5 @@
 #include "PluginEditor.hpp"
+#include "EnumIndexes.hpp"
 
 void AudioPluginAudioProcessorEditor::delayInit() {
 	this->delaySliders.reserve(7);
@@ -59,7 +60,6 @@ void AudioPluginAudioProcessorEditor::delayHandler() {
 
 	this->delayType.onChange = [this]() {
 		int selected = this->delayType.getSelectedId();
-		std::cout << "hahaha" << std::endl;
 	};
 
 	this->leftTimeOption.onChange = [this]() {

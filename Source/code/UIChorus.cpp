@@ -1,4 +1,5 @@
 #include "PluginEditor.hpp"
+#include "EnumIndexes.hpp"
 
 void AudioPluginAudioProcessorEditor::chorusInit() {
 	this->chorusSliders.reserve(7);
