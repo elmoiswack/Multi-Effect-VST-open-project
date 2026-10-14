@@ -46,7 +46,6 @@ void AudioPluginAudioProcessorEditor::eqInit() {
 	}
 
 	eqHandler();
-
 }
 
 void AudioPluginAudioProcessorEditor::eqHandler() {
@@ -58,13 +57,13 @@ void AudioPluginAudioProcessorEditor::eqHandler() {
     }
 
 	this->lowSlope.onChange = [this]() {
-		juce::String comboId = "eq.low.slope";
-		int selected = this->lowSlope.getSelectedId();
+		auto param = processorRef.getAPVTS().getParameter("eq.low.slope");
+		param->setValueNotifyingHost(this->lowSlope.getSelectedId());
 	};
 
 	this->highSlope.onChange = [this]() {
-		juce::String comboId = "eq.high.slope";
-		int selected = this->lowSlope.getSelectedId();
+		auto param = processorRef.getAPVTS().getParameter("eq.high.slope");
+		param->setValueNotifyingHost(this->highSlope.getSelectedId());
 	};
 }
 

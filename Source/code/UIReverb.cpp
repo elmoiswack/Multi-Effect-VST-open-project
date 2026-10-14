@@ -37,7 +37,6 @@ void AudioPluginAudioProcessorEditor::reverbInit() {
 	this->reverbType.setSelectedId(1);
 
 	reverbHandler();
-
 }
 
 void AudioPluginAudioProcessorEditor::reverbHandler() {
@@ -49,8 +48,8 @@ void AudioPluginAudioProcessorEditor::reverbHandler() {
     }
 
 	this->reverbType.onChange = [this]() {
-		juce::String comboId = "reverb.type";
-		int selected = this->reverbType.getSelectedId();
+		auto param = processorRef.getAPVTS().getParameter("reverb.type");
+		param->setValueNotifyingHost(this->reverbType.getSelectedId());
 	};
 }
 

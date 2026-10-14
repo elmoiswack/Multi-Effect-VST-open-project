@@ -47,8 +47,8 @@ void AudioPluginAudioProcessorEditor::distortionHandler() {
     }
 
 	this->distortionType.onChange = [this]() {
-		juce::String comboId = "distortion.type";
-		int selected = this->distortionType.getSelectedId();
+		auto param = processorRef.getAPVTS().getParameter("distortion.type");
+		param->setValueNotifyingHost(this->distortionType.getSelectedId());
 	};
 }
 

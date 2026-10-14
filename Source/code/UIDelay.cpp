@@ -61,18 +61,18 @@ void AudioPluginAudioProcessorEditor::delayHandler() {
     }
 
 	this->delayType.onChange = [this]() {
-		juce::String comboId = "delay.type";
-		int selected = this->delayType.getSelectedId();
+		auto param = processorRef.getAPVTS().getParameter("delay.type");
+		param->setValueNotifyingHost(this->delayType.getSelectedId());
 	};
 
 	this->leftTimeOption.onChange = [this]() {
-		juce::String comboId = "delay.left.option";
-		int selected = this->leftTimeOption.getSelectedId();
+		auto param = processorRef.getAPVTS().getParameter("delay.left.option");
+		param->setValueNotifyingHost(this->leftTimeOption.getSelectedId());
 	};
 
 	this->rightTimeOption.onChange = [this]() {
-		juce::String comboId = "delay.right.option";
-		int selected = this->rightTimeOption.getSelectedId();
+		auto param = processorRef.getAPVTS().getParameter("delay.right.option");
+		param->setValueNotifyingHost(this->rightTimeOption.getSelectedId());
 	};
 }
 
