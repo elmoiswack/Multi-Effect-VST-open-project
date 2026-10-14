@@ -4,25 +4,25 @@
 void AudioPluginAudioProcessorEditor::chorusInit() {
 	this->chorusSliders.reserve(7);
 
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Delay", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::DELAY)));
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("chorus.delay", "Delay", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, this->processorRef));
 	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::DELAY)]);
 
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Rate", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::RATE)));
-	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::RATE)]);
-	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Depth", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::DEPTH)));
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("chorus.rate", "Rate", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, this->processorRef));
+	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::RATE)]);	
+
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("chorus.depth", "Depth", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, this->processorRef));
 	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::DEPTH)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Width", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::WIDTH)));
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("chorus.width", "Width", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, this->processorRef));
 	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::WIDTH)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::FEEDBACK)));
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("chorus.feedback", "Feedback", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, this->processorRef));
 	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::FEEDBACK)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("HighCut", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::HIGHCUT)));
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("chorus.highcut", "HighCut", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, this->processorRef));
 	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::HIGHCUT)]);
 	
-	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, static_cast<int>(ChorusIndex::MIX)));
+	this->chorusSliders.emplace_back(std::make_unique<CustomSlider>("chorus.mix", "Mix", ColorsScheme::chorusPrimary, ColorsScheme::chorusSecondary, this->processorRef));
 	addAndMakeVisible(*this->chorusSliders[static_cast<int>(ChorusIndex::MIX)]);
 
 	chorusHandler();
@@ -30,48 +30,12 @@ void AudioPluginAudioProcessorEditor::chorusInit() {
 
 void AudioPluginAudioProcessorEditor::chorusHandler() {
 	for (auto& slider : this->chorusSliders) {
-        slider->onValueChange = [this](int index, float value) {
-			juce::String sliderId = this->getChorusId(index);
-			std::cout << sliderId << ": " << value << std::endl;
-			
-            repaint();
+        slider->onValueChange = [this](float value, juce::String id) {
+			auto param = processorRef.getAPVTS().getParameter(id);
+			param->setValueNotifyingHost(value);
         };
     }
 }
-
-juce::String AudioPluginAudioProcessorEditor::getChorusId(int index) {
-	juce::String id = "chorus.";
-
-	switch (index)
-	{
-	case static_cast<int>(ChorusIndex::DELAY):
-		id += "delay";
-		break;
-	case static_cast<int>(ChorusIndex::RATE):
-		id += "rate";
-		break;
-	case static_cast<int>(ChorusIndex::DEPTH):
-		id += "depth";
-		break;
-	case static_cast<int>(ChorusIndex::WIDTH):
-		id += "width";
-		break;
-	case static_cast<int>(ChorusIndex::FEEDBACK):
-		id += "feedback";
-		break;
-	case static_cast<int>(ChorusIndex::HIGHCUT):
-		id += "highcut";
-		break;	
-	case static_cast<int>(ChorusIndex::MIX):
-		id += "mix";
-		break;	
-	default:
-		break;
-	}
-
-	return id;
-}
-
 
 void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::chorusBackground[0], ColorsScheme::chorusBackground[1], ColorsScheme::chorusBackground[2]));

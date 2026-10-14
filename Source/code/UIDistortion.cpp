@@ -3,22 +3,23 @@
 
 void AudioPluginAudioProcessorEditor::distortionInit() {
 	this->distortionSliders.reserve(6);
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Drive", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::DRIVE)));
+
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("distortion.drive", "Drive", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, this->processorRef));
 	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::DRIVE)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Tone", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::TONE)));
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("distortion.tone", "Tone", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, this->processorRef));
 	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::TONE)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("OutputGain", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::OUTPUTGAIN)));
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("distortion.outputgain", "OutputGain", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, this->processorRef));
 	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::OUTPUTGAIN)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Highcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::HIGHCUT)));
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("distortion.highcut", "Highcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, this->processorRef));
 	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::HIGHCUT)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Lowcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::LOWCUT)));
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("distortion.lowcut", "Lowcut", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, this->processorRef));
 	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::LOWCUT)]);
 
-	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, static_cast<int>(DistortionIndex::MIX)));
+	this->distortionSliders.emplace_back(std::make_unique<CustomSlider>("distortion.mix", "Mix", ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary, this->processorRef));
 	addAndMakeVisible(*this->distortionSliders[static_cast<int>(DistortionIndex::MIX)]);
 
 	this->distortionLAFCB.setColors(ColorsScheme::distortionPrimary, ColorsScheme::distortionSecondary);
@@ -36,13 +37,12 @@ void AudioPluginAudioProcessorEditor::distortionInit() {
 	distortionHandler();
 }
 
+
 void AudioPluginAudioProcessorEditor::distortionHandler() {
 	for (auto& slider : this->distortionSliders) {
-        slider->onValueChange = [this](int index, float value) {
-			juce::String sliderId = this->getDistortionId(index);
-			std::cout << sliderId << ": " << value << std::endl;
-
-            repaint();
+        slider->onValueChange = [this](float value, juce::String id) {
+			auto param = processorRef.getAPVTS().getParameter(id);
+			param->setValueNotifyingHost(value);
         };
     }
 
@@ -50,36 +50,6 @@ void AudioPluginAudioProcessorEditor::distortionHandler() {
 		juce::String comboId = "distortion.type";
 		int selected = this->distortionType.getSelectedId();
 	};
-}
-
-juce::String AudioPluginAudioProcessorEditor::getDistortionId(int index) {
-	juce::String id = "distortion.";
-
-	switch (index)
-	{
-	case static_cast<int>(DistortionIndex::DRIVE):
-		id += "drive";
-		break;
-	case static_cast<int>(DistortionIndex::TONE):
-		id += "tone";
-		break;
-	case static_cast<int>(DistortionIndex::OUTPUTGAIN):
-		id += "outputgain";
-		break;
-	case static_cast<int>(DistortionIndex::HIGHCUT):
-		id += "highcut";
-		break;
-	case static_cast<int>(DistortionIndex::LOWCUT):
-		id += "lowcut";
-		break;
-	case static_cast<int>(DistortionIndex::MIX):
-		id += "mix";
-		break;	
-	default:
-		break;
-	}
-
-	return id;
 }
 
 void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {

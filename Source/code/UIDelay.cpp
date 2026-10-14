@@ -4,25 +4,25 @@
 void AudioPluginAudioProcessorEditor::delayInit() {
 	this->delaySliders.reserve(7);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Left", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::LEFTDELAY)));
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("delay.left.time", "Left", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, this->processorRef));
 	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::LEFTDELAY)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::LEFTFEEDBACK)));
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("delay.left.feedback", "Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, this->processorRef));
 	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::LEFTFEEDBACK)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Right", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::RIGHTDELAY)));
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("delay.right.time", "Right", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, this->processorRef));
 	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]);
-	
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::RIGHTFEEDBACK)));
+
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("delay.right.feedback", "Feedback", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, this->processorRef));
 	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Lowcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::LOWCUT)));
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("delay.lowcut", "Lowcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, this->processorRef));
 	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Highcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::HIGHCUT)));
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("delay.highcut", "Highcut", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, this->processorRef));
 	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]);
 
-	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, static_cast<int>(DelayIndex::MIX)));
+	this->delaySliders.emplace_back(std::make_unique<CustomSlider>("delay.mix", "Mix", ColorsScheme::delayPrimary, ColorsScheme::delaySecondary, this->processorRef));
 	addAndMakeVisible(*this->delaySliders[static_cast<int>(DelayIndex::MIX)]);
 
 	this->delayLAFCB.setColors(ColorsScheme::delayPrimary, ColorsScheme::delaySecondary);
@@ -51,17 +51,12 @@ void AudioPluginAudioProcessorEditor::delayInit() {
 
 void AudioPluginAudioProcessorEditor::delayHandler() {
 	for (auto& slider : this->delaySliders) {
-        slider->onValueChange = [this](int index, float value) {
-			juce::String sliderId = this->getDelayId(index);
-			std::cout << sliderId << ": " << value << std::endl;
+        slider->onValueChange = [this](float value, juce::String id) {
+			auto param = processorRef.getAPVTS().getParameter(id);
+			param->setValueNotifyingHost(value);
 
+			// if id contains .time and sync = on, update both left and right
 
-			if ((index == static_cast<int>(DelayIndex::LEFTDELAY) || index == static_cast<int>(DelayIndex::RIGHTDELAY)) &&
-				delayType.getSelectedId() == 2) { //TODO: enum for ComboBoxes
-				//TODO: update left and right
-			}
-
-            repaint();
         };
     }
 
@@ -80,40 +75,6 @@ void AudioPluginAudioProcessorEditor::delayHandler() {
 		int selected = this->rightTimeOption.getSelectedId();
 	};
 }
-
-juce::String AudioPluginAudioProcessorEditor::getDelayId(int index) {
-	juce::String id = "delay.";
-
-	switch (index)
-	{
-	case static_cast<int>(DelayIndex::LEFTDELAY):
-		id += "left.time";
-		break;
-	case static_cast<int>(DelayIndex::LEFTFEEDBACK):
-		id += "left.feedback";
-		break;
-	case static_cast<int>(DelayIndex::RIGHTDELAY):
-		id += "right.time";
-		break;
-	case static_cast<int>(DelayIndex::RIGHTFEEDBACK):
-		id += "right.feedback";
-		break;
-	case static_cast<int>(DelayIndex::HIGHCUT):
-		id += "highcut";
-		break;
-	case static_cast<int>(DelayIndex::LOWCUT):
-		id += "lowcut";
-		break;	
-	case static_cast<int>(DelayIndex::MIX):
-		id += "mix";
-		break;	
-	default:
-		break;
-	}
-
-	return id;
-}
-
 
 void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::delayBackground[0], ColorsScheme::delayBackground[1], ColorsScheme::delayBackground[2]));

@@ -1,7 +1,6 @@
 #include "CustomSlider.hpp"
 
 CustomSlider::CustomSlider() {
-	this->index = 0;
 	this->primaryColor[0] = 0;
 	this->primaryColor[1] = 0;
 	this->primaryColor[2] = 0;
@@ -14,9 +13,9 @@ CustomSlider::CustomSlider() {
     this->dragStartValue = 0.f;
 }
 
-CustomSlider::CustomSlider(juce::String sliderName, const juce::uint8* primary, const juce::uint8* secondary, int indexValue) {
+CustomSlider::CustomSlider(juce::String sliderParamId, juce::String sliderName, const juce::uint8* primary, const juce::uint8* secondary, AudioPluginAudioProcessor& pRef) {
+    this->paramId = sliderParamId;
 	this->name = sliderName;
-	this->index = indexValue;
 
 	this->primaryColor[0] = primary[0];
 	this->primaryColor[1] = primary[1];
@@ -26,7 +25,7 @@ CustomSlider::CustomSlider(juce::String sliderName, const juce::uint8* primary, 
 	this->secondaryColor[1] = secondary[1];
 	this->secondaryColor[2] = secondary[2];
 
-	this->normalisedValue = 0.f;
+	this->normalisedValue = pRef.getAPVTS().getParameter(sliderParamId)->getValue();
     this->dragStartValue = 0.f;
 }
 
@@ -44,7 +43,7 @@ void CustomSlider::paint(juce::Graphics& g) {
     float rx = centreX - radius;
     float ry = centreY - radius;
     float rw = radius * 2.0f;
-    float angle = rotaryStartAngle + this->normalisedValue *(rotaryEndAngle - rotaryStartAngle);
+    float angle = rotaryStartAngle + this->normalisedValue * (rotaryEndAngle - rotaryStartAngle);
 
     g.setColour(juce::Colour::fromRGB(this->primaryColor[0], this->primaryColor[1], this->primaryColor[2]));
     g.fillEllipse(rx, ry, rw, rw);
@@ -81,7 +80,11 @@ void CustomSlider::setValue(float newValue) {
     repaint();
 
     if (onValueChange)
-        onValueChange(this->index, this->normalisedValue);
+        onValueChange(this->normalisedValue, this->paramId);
+}
+
+juce::String CustomSlider::getParamId() {
+    return this->paramId;
 }
 
 juce::String CustomSlider::getName() {

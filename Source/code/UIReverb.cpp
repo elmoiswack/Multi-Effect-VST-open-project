@@ -3,25 +3,26 @@
 
 void AudioPluginAudioProcessorEditor::reverbInit() {
 	this->reverbSliders.reserve(7);
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Decay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::DECAY)));
+
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("reverb.decay", "Decay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, this->processorRef));
 	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::DECAY)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("PreDelay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::PREDELAY)));
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("reverb.predelay", "PreDelay", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, this->processorRef));
 	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::PREDELAY)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Tone", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::TONE)));
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("reverb.tone", "Tone", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, this->processorRef));
 	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::TONE)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Size", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::SIZE)));
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("reverb.size", "Size", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, this->processorRef));
 	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::SIZE)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("HighCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::HIGHCUT)));
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("reverb.highcut", "HighCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, this->processorRef));
 	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::HIGHCUT)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("LowCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::LOWCUT)));
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("reverb.lowcut", "LowCut", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, this->processorRef));
 	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]);
 
-	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("Mix", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, static_cast<int>(ReverbIndex::MIX)));
+	this->reverbSliders.emplace_back(std::make_unique<CustomSlider>("reverb.mix", "Mix", ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary, this->processorRef));
 	addAndMakeVisible(*this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]);
 
 	this->reverbLAFCB.setColors(ColorsScheme::reverbPrimary, ColorsScheme::reverbSecondary);
@@ -36,15 +37,14 @@ void AudioPluginAudioProcessorEditor::reverbInit() {
 	this->reverbType.setSelectedId(1);
 
 	reverbHandler();
+
 }
 
 void AudioPluginAudioProcessorEditor::reverbHandler() {
 	for (auto& slider : this->reverbSliders) {
-        slider->onValueChange = [this](int index, float value) {
-			juce::String sliderId = this->getReverbId(index);
-			std::cout << sliderId << ": " << value << std::endl;
-
-            repaint();
+        slider->onValueChange = [this](float value, juce::String id) {
+			auto param = processorRef.getAPVTS().getParameter(id);
+			param->setValueNotifyingHost(value);
         };
     }
 
@@ -52,39 +52,6 @@ void AudioPluginAudioProcessorEditor::reverbHandler() {
 		juce::String comboId = "reverb.type";
 		int selected = this->reverbType.getSelectedId();
 	};
-}
-
-juce::String AudioPluginAudioProcessorEditor::getReverbId(int index) {
-	juce::String id = "reverb.";
-
-	switch (index)
-	{
-	case static_cast<int>(ReverbIndex::DECAY):
-		id += "decay";
-		break;
-	case static_cast<int>(ReverbIndex::PREDELAY):
-		id += "predelay";
-		break;
-	case static_cast<int>(ReverbIndex::TONE):
-		id += "tone";
-		break;
-	case static_cast<int>(ReverbIndex::SIZE):
-		id += "size";
-		break;
-	case static_cast<int>(ReverbIndex::HIGHCUT):
-		id += "highcut";
-		break;
-	case static_cast<int>(ReverbIndex::LOWCUT):
-		id += "lowcut";
-		break;
-	case static_cast<int>(ReverbIndex::MIX):
-		id += "mix";
-		break;
-	default:
-		break;
-	}
-
-	return id;
 }
 
 void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {

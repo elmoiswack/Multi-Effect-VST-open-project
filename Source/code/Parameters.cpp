@@ -20,18 +20,6 @@ juce::AudioProcessorValueTreeState& Parameters::getApvts() {
     return this->apvts;
 }
 
-//// Float parameter (continuous values)
-//std::make_unique<juce::AudioParameterFloat>("id", "Name", min, max, default);
-
-//// Int parameter (discrete values)
-//std::make_unique<juce::AudioParameterInt>("id", "Name", minInt, maxInt, defaultInt);
-
-//// Bool parameter (on/off)
-//std::make_unique<juce::AudioParameterBool>("id", "Name", defaultBool);
-
-//// Choice parameter (dropdown)
-//std::make_unique<juce::AudioParameterChoice>("id", "Name", choices, defaultIndex);
-
 void Parameters::initReverb(juce::AudioProcessorValueTreeState::ParameterLayout& layout) {
 	layout.add(std::make_unique<juce::AudioParameterBool>("reverb.on", "On", false));
 	
@@ -94,22 +82,25 @@ void Parameters::initChorus(juce::AudioProcessorValueTreeState::ParameterLayout&
 	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.depth", "depth", 0.0f, 100.0f, 50.0f)); //percentage
 	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.width", "width", 0.0f, 100.0f, 50.0f)); //percentage
 	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.feedback", "Feedback", 0.0f, 100.0f, 50.0f)); //percentage
-	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.feedback.mix", "Mix", 0.0f, 100.0f, 50.0f)); //percentage
+	
+	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.highcut", "Highcut", 10.0f, 20000.0f, 20000.0f)); //hz
+
+	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.mix", "Mix", 0.0f, 100.0f, 50.0f)); //percentage
 }
 
 void Parameters::initEQ(juce::AudioProcessorValueTreeState::ParameterLayout& layout) {
 	layout.add(std::make_unique<juce::AudioParameterBool>("eq.on", "On", false));
 
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.frequency", "Frequency", 0.0f, 200.0f, 20.0f)); //hz
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.frequency", "Frequency", 0.0f, 200.0f, 0.0f)); //hz
 	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.gain", "Gain", -30.0f, 30.0f, 0.0f)); //dB
 	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.quality", "Quality", -6.0f, 6.0f, 0.0f)); //dB
 	layout.add(std::make_unique<juce::AudioParameterChoice>("eq.low.slope", "Slope", juce::StringArray("6 db", "12 db", "24 db", "36 db"), 0));
 
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.frequency", "Frequency", 0.0f, 200.0f, 20.0f)); //hz
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.frequency", "Frequency", 200.0f, 2000.0f, 1000.0f)); //hz
 	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.gain", "Gain", -30.0f, 30.0f, 0.0f)); //dB
 	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.quality", "Quality", -6.0f, 6.0f, 0.0f)); //dB
 
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.frequency", "Frequency", 0.0f, 200.0f, 20.0f)); //hz
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.frequency", "Frequency", 2000.0f, 20000.0f, 20000.0f)); //hz
 	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.gain", "Gain", -30.0f, 30.0f, 0.0f)); //dB
 	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.quality", "Quality", -6.0f, 6.0f, 0.0f)); //dB
 	layout.add(std::make_unique<juce::AudioParameterChoice>("eq.high.slope", "Slope", juce::StringArray("6 db", "12 db", "24 db", "36 db"), 0));
