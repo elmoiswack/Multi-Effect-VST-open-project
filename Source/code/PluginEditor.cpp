@@ -178,12 +178,12 @@ void AudioPluginAudioProcessorEditor::computeView(EffectIndex effect) {
         this->lowSlope.setVisible(false);
         break;
     case EffectIndex::ADD:
-        for (auto& it : this->selectEffectBox) {
+        for (auto& it : this->selectCustomEffectBox) {
 		    it.setVisible(false);
 	    }
         break;
     default:
-        for (auto& it : this->selectEffectBox) {
+        for (auto& it : this->selectCustomEffectBox) {
 		    it.setVisible(false);
 	    }
         break;
@@ -196,7 +196,7 @@ void AudioPluginAudioProcessorEditor::computeView(EffectIndex effect) {
 
 
 void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
-    auto target = &this->chainEffectBox[effect];
+    auto target = &this->chainCustomEffectBox[effect];
 
     if (std::find(this->activeChain.begin(), this->activeChain.end(), target) != this->activeChain.end())
         return;
@@ -206,9 +206,14 @@ void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
         this->activeChain.pop_back();
     }
 
-    this->selectEffectBox[effect].setActive(true);
+    this->selectCustomEffectBox[effect].setActive(true);
     this->activeChain.push_back(target);
     target->setVisible(true);
+
+    juce::String effectId = target->getEffectName().toLowerCase();
+    effectId += ".on";
+    auto param = this->processorRef.getAPVTS().getParameter(effectId);
+    param->setValueNotifyingHost(true);
 
     if (this->activeChain.size() < 5) {
         this->adder->setVisible(true);
@@ -219,14 +224,16 @@ void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
 }
 
 void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
-    auto target = &this->chainEffectBox[effect];
+    auto target = &this->chainCustomEffectBox[effect];
 
     auto it = std::find(this->activeChain.begin(), this->activeChain.end(), target);
-    if (it == this->activeChain.end())
-        return;
     target->setVisible(false);
-    this->selectEffectBox[effect].setActive(false);
-
+    this->selectCustomEffectBox[effect].setActive(false);
+    
+    juce::String effectId = target->getEffectName().toLowerCase();
+    effectId += ".on";
+    auto param = this->processorRef.getAPVTS().getParameter(effectId);
+    param->setValueNotifyingHost(false);
 
     this->activeChain.erase(it);
 
@@ -276,7 +283,7 @@ void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const
     startSlot = juce::jlimit(0, (int)this->activeChain.size() - 1, startSlot);
 
     auto it = this->activeChain.begin() + slot;
-    if ((*it)->getEffectBoxType() == EffectBoxType::ADDER) {
+    if ((*it)->getCustomEffectBoxType() == CustomEffectBoxType::ADDER) {
         this->drawMoveChainObject = false;
         this->computeView(this->currentSelected);
         return ;

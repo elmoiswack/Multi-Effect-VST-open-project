@@ -1,8 +1,8 @@
 #include "PluginEditor.hpp"
 
 void AudioPluginAudioProcessorEditor::selectorInit() {
-    this->selectEffectBox.reserve(5);
-    this->chainEffectBox.reserve(6);
+    this->selectCustomEffectBox.reserve(5);
+    this->chainCustomEffectBox.reserve(6);
     this->activeChain.reserve(5);
    
     this->initEffectObject("Reverb", ColorsScheme::reverbPrimary, EffectIndex::REVERB);
@@ -11,10 +11,10 @@ void AudioPluginAudioProcessorEditor::selectorInit() {
     this->initEffectObject("Chorus", ColorsScheme::chorusPrimary, EffectIndex::CHORUS);
     this->initEffectObject("EQ", ColorsScheme::eqPrimary, EffectIndex::EQ);
 
-    auto& adderBox = this->chainEffectBox.emplace_back(
+    auto& adderBox = this->chainCustomEffectBox.emplace_back(
         "Adder",
         ColorsScheme::eqPrimary,
-        EffectBoxType::ADDER,
+        CustomEffectBoxType::ADDER,
         EffectIndex::ADD
     );
 
@@ -29,10 +29,10 @@ void AudioPluginAudioProcessorEditor::selectorInit() {
 }
 
 void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const juce::uint8* color, EffectIndex index) {
-    auto& objectSelector = this->selectEffectBox.emplace_back(
+    auto& objectSelector = this->selectCustomEffectBox.emplace_back(
         name,
         color,
-        EffectBoxType::SELECTOR,
+        CustomEffectBoxType::SELECTOR,
         index
     );
     objectSelector.onLeftClickAdd = [this](EffectIndex effect) {
@@ -40,10 +40,10 @@ void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const 
     };
     addAndMakeVisible(objectSelector);
     
-    auto& objectChain = this->chainEffectBox.emplace_back(
+    auto& objectChain = this->chainCustomEffectBox.emplace_back(
         name,
         color,
-        EffectBoxType::CHAIN,
+        CustomEffectBoxType::CHAIN,
         index
     );
 
@@ -79,37 +79,37 @@ void AudioPluginAudioProcessorEditor::selectorResized() {
     auto widthBox = 150;
     auto heigthBox = 125;
 
-	this->selectEffectBox[EffectIndex::REVERB].setBounds(
+	this->selectCustomEffectBox[EffectIndex::REVERB].setBounds(
         width / 4 - (width / 8), 
         height / 4,
         widthBox,
         heigthBox);
 
-   this->selectEffectBox[EffectIndex::DISTORTION].setBounds(
+   this->selectCustomEffectBox[EffectIndex::DISTORTION].setBounds(
         width / 4 * 3 - (width / 8), 
         height / 4, 
         widthBox, 
         heigthBox);
 
-    this->selectEffectBox[EffectIndex::DELAY].setBounds(
+    this->selectCustomEffectBox[EffectIndex::DELAY].setBounds(
         width / 4 - (width / 8), 
         height / 4 * 2, 
         widthBox, 
         heigthBox);
 
-    this->selectEffectBox[EffectIndex::CHORUS].setBounds(
+    this->selectCustomEffectBox[EffectIndex::CHORUS].setBounds(
         width / 4 * 3 - (width / 8), 
         height / 4 * 2, 
         widthBox, 
         heigthBox);
 
-    this->selectEffectBox[EffectIndex::EQ].setBounds(
+    this->selectCustomEffectBox[EffectIndex::EQ].setBounds(
         width / 2 - (width / 8), 
         height / 4 * 2, 
         widthBox,
         heigthBox);
 
-    for (auto& it : this->selectEffectBox) {
+    for (auto& it : this->selectCustomEffectBox) {
 	    it.setVisible(true);
 	}
 }

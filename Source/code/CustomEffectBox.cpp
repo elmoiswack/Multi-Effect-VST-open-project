@@ -1,16 +1,16 @@
-#include "EffectBox.hpp"
+#include "CustomEffectBox.hpp"
 
-EffectBox::EffectBox() : xIcon(nullptr), drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted), effectIndex(EffectIndex::REVERB) {
+CustomEffectBox::CustomEffectBox() : xIcon(nullptr), drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted), effectIndex(EffectIndex::REVERB) {
     this->effectName = "";
     this->color[0] = 0;
     this->color[1] = 0;
     this->color[2] = 0;
-    this->type = EffectBoxType::ADDER;
+    this->type = CustomEffectBoxType::ADDER;
     this->effectIndex = EffectIndex::ADD;
     this->isActive = false;
 }
 
-EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxType typeBox, EffectIndex index) : 
+CustomEffectBox::CustomEffectBox(juce::String name, const juce::uint8* colorRGB, CustomEffectBoxType typeBox, EffectIndex index) : 
     drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted), effectIndex(index) 
 {
 	this->effectName = name;
@@ -20,7 +20,7 @@ EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxTy
 	this->type = typeBox;
     this->isActive = false;
     
-	if (typeBox == EffectBoxType::CHAIN) {
+	if (typeBox == CustomEffectBoxType::CHAIN) {
 		this->xIcon = juce::Drawable::createFromImageData(
 		BinaryData::x_svg,
 		BinaryData::x_svgSize);
@@ -32,11 +32,11 @@ EffectBox::EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxTy
 	}
 }
 
-EffectBox::~EffectBox() {
+CustomEffectBox::~CustomEffectBox() {
 
 }
 
-EffectBox::EffectBox(EffectBox&& other) noexcept
+CustomEffectBox::CustomEffectBox(CustomEffectBox&& other) noexcept
     : drawableIcon("xIcon button", juce::DrawableButton::ButtonStyle::ImageFitted) {
     this->effectName = std::move(other.effectName);
     this->xIcon = std::move(other.xIcon);
@@ -59,7 +59,7 @@ EffectBox::EffectBox(EffectBox&& other) noexcept
     other.color[2] = 0;
 }
 
-EffectBox& EffectBox::operator=(EffectBox&& other) noexcept {
+CustomEffectBox& CustomEffectBox::operator=(CustomEffectBox&& other) noexcept {
     if (this != &other)
     {
         this->effectName = std::move(other.effectName);
@@ -82,10 +82,10 @@ EffectBox& EffectBox::operator=(EffectBox&& other) noexcept {
     return *this;
 }
 
-void EffectBox::paint(juce::Graphics& g) {
+void CustomEffectBox::paint(juce::Graphics& g) {
 	float cornerSize = 20.f;
 
-    if (this->isActive == true && this->type == EffectBoxType::SELECTOR)
+    if (this->isActive == true && this->type == CustomEffectBoxType::SELECTOR)
         g.setColour(juce::Colour::fromRGB(38, 38, 38));
     else
         g.setColour(juce::Colour::fromRGB(58, 58, 58));
@@ -93,7 +93,7 @@ void EffectBox::paint(juce::Graphics& g) {
 	g.fillRoundedRectangle(getLocalBounds().toFloat(), cornerSize);
 	g.drawRoundedRectangle(getLocalBounds().toFloat(), cornerSize, 5.0f);
 
-    if (this->type == EffectBoxType::ADDER) {
+    if (this->type == CustomEffectBoxType::ADDER) {
         juce::Path verticle;
         juce::Path horizontal;
         int chainBoxWidth = 170;
@@ -118,48 +118,48 @@ void EffectBox::paint(juce::Graphics& g) {
     }
 }
 
-void EffectBox::resized() {
+void CustomEffectBox::resized() {
 	int width = getWidth();
 	int svgHeight = 15.0f;
 	int svgWidth = 15.0f;
 
-	if (this->type == EffectBoxType::CHAIN) {
+	if (this->type == CustomEffectBoxType::CHAIN) {
 		this->drawableIcon.setBounds(width - (svgWidth * 1.5f), 10.0f, svgWidth, svgHeight);
 	}
 }
 
-void EffectBox::mouseDown(const juce::MouseEvent& event)
+void CustomEffectBox::mouseDown(const juce::MouseEvent& event)
 {
     if (event.mods.isLeftButtonDown()) {
-        if (this->onLeftClickAdd && this->type == EffectBoxType::SELECTOR)
+        if (this->onLeftClickAdd && this->type == CustomEffectBoxType::SELECTOR)
             this->onLeftClickAdd(this->effectIndex);
         if (this->onLeftClickShowEffect && \
-            (this->type == EffectBoxType::CHAIN || this->type == EffectBoxType::ADDER))
+            (this->type == CustomEffectBoxType::CHAIN || this->type == CustomEffectBoxType::ADDER))
             this->onLeftClickShowEffect(this->effectIndex);
     }
 }
 
-void EffectBox::mouseDrag(const juce::MouseEvent& event) {
-    if (onLeftClickDragEffect && this->type == EffectBoxType::CHAIN) {
+void CustomEffectBox::mouseDrag(const juce::MouseEvent& event) {
+    if (onLeftClickDragEffect && this->type == CustomEffectBoxType::CHAIN) {
         onLeftClickDragEffect(this->effectIndex, event);
     }
 }
 
-void EffectBox::mouseUp(const juce::MouseEvent& event) {
-    if (onLeftClickReplaceAfterDrag && this->type == EffectBoxType::CHAIN) {
+void CustomEffectBox::mouseUp(const juce::MouseEvent& event) {
+    if (onLeftClickReplaceAfterDrag && this->type == CustomEffectBoxType::CHAIN) {
         onLeftClickReplaceAfterDrag(this->effectIndex, event);
     }
 }
 
-juce::String EffectBox::getEffectName() {
+juce::String CustomEffectBox::getEffectName() {
     return this->effectName;
 }
 
-EffectBoxType EffectBox::getEffectBoxType() {
+CustomEffectBoxType CustomEffectBox::getCustomEffectBoxType() {
     return this->type;
 }
 
-void EffectBox::setActive(bool value) {
+void CustomEffectBox::setActive(bool value) {
     this->isActive = value;
     resized();
     repaint();

@@ -10,29 +10,29 @@ enum EffectIndex {
 	ADD,
 };
 
-enum EffectBoxType {
+enum CustomEffectBoxType {
 	CHAIN,
 	SELECTOR,
 	ADDER,
 };
 
-class EffectBox : public juce::Component
+class CustomEffectBox : public juce::Component
 {
 private:
 	juce::String effectName;
 	juce::uint8 color[3];
-	EffectBoxType type;
+	CustomEffectBoxType type;
 	std::unique_ptr<juce::Drawable> xIcon;
 	juce::DrawableButton drawableIcon;
 	EffectIndex effectIndex;
 	bool isActive;
 
 public:
-	EffectBox();
-	EffectBox(juce::String name, const juce::uint8* colorRGB, EffectBoxType type, EffectIndex index);
-	EffectBox(EffectBox&& other) noexcept;
-	EffectBox& operator=(EffectBox&& other) noexcept;
-	~EffectBox() override; 
+	CustomEffectBox();
+	CustomEffectBox(juce::String name, const juce::uint8* colorRGB, CustomEffectBoxType type, EffectIndex index);
+	CustomEffectBox(CustomEffectBox&& other) noexcept;
+	CustomEffectBox& operator=(CustomEffectBox&& other) noexcept;
+	~CustomEffectBox() override; 
 
     void paint(juce::Graphics& g) override;
     void resized() override;
@@ -53,6 +53,6 @@ public:
     std::function<void(EffectIndex)> onLeftClickRemove;
 
 	juce::String getEffectName();
-	EffectBoxType getEffectBoxType();
+	CustomEffectBoxType getCustomEffectBoxType();
 };
 

@@ -3,7 +3,7 @@
 #include "PluginProcessor.hpp"
 #include "CustomSlider.hpp"
 #include "CustomLAFCombo.hpp"
-#include "EffectBox.hpp"
+#include "CustomEffectBox.hpp"
 #include <vector>
 #include <algorithm>
 
@@ -88,10 +88,10 @@ public:
 private:
     AudioPluginAudioProcessor& processorRef;
 
-    std::vector<EffectBox> selectEffectBox;
-    std::vector<EffectBox> chainEffectBox;
-    std::vector<EffectBox*> activeChain;
-    EffectBox* adder;
+    std::vector<CustomEffectBox> selectCustomEffectBox;
+    std::vector<CustomEffectBox> chainCustomEffectBox;
+    std::vector<CustomEffectBox*> activeChain;
+    CustomEffectBox* adder;
 
     EffectIndex currentSelected;
 
