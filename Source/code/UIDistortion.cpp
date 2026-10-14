@@ -112,7 +112,7 @@ void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
 
 	int boxWidth = 120;
 	int boxHeight = 70;
-	textArea.setX((width / 2) - (boxWidth / 2) - textOffestX);
+	textArea.setX((getLocalBounds().getWidth() / 2) - (boxWidth / 2));
 	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight * 1.5) - textHeight - 10); //remove magic number
     g.drawText("Type", textArea, juce::Justification::centred, true);
 
@@ -139,10 +139,6 @@ void AudioPluginAudioProcessorEditor::distortionResized() {
     auto height = this->effectArea.getHeight();
 	int sliderWidth = 100;
     int sliderHeight = 100;
-	int boxWidth = 120;
-	int boxHeight = 70;
-	int boxX = (width / 2) - (boxWidth / 2);
-	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5); 
 
 	int startX = x + (sliderWidth * 1.5);
 	int startY = y + sliderHeight;
@@ -160,7 +156,13 @@ void AudioPluginAudioProcessorEditor::distortionResized() {
 
 	this->distortionSliders[static_cast<int>(DistortionIndex::MIX)]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
+	int boxWidth = 120;
+	int boxHeight = 70;
+	int boxX = (getLocalBounds().getWidth() / 2) - (boxWidth / 2);
+	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5);
+
 	this->distortionType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->distortionType.setVisible(true);
+
 	this->setSlidersVisable(this->distortionSliders, true);
 }

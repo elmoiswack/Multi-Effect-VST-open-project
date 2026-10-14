@@ -50,7 +50,7 @@ void AudioPluginAudioProcessorEditor::delayInit() {
 }
 
 void AudioPluginAudioProcessorEditor::delayHandler() {
-	for (auto& slider : this->chorusSliders) {
+	for (auto& slider : this->delaySliders) {
         slider->onValueChange = [this](int index, float value) {
 			juce::String sliderId = this->getDelayId(index);
 			std::cout << sliderId << ": " << value << std::endl;
@@ -144,17 +144,17 @@ void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 
 	textArea.setX(width / 2 - (sliderWidth * 1.8));
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
-    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 - (sliderWidth * 1.8) + (getLocalBounds().getWidth() / 4));
-    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth);
 	textArea.setY(startY - textHeight);
-    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
-    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
+    g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20);
 	textArea.setY(this->effectArea.getHeight() - textHeight);
@@ -166,7 +166,7 @@ void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 	textArea.setY(startY + (sliderHeight * 2.5) + (boxHeight / 2) - textHeight - 7);
     g.drawText("Note", textArea, juce::Justification::centred, true);
 	
-	textArea.setX((width / 2) - (boxWidth / 2));
+	textArea.setX((getLocalBounds().getWidth() / 2) - (boxWidth / 2));
 	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight * 1.5) - textHeight - 7); //remove magic number
     g.drawText("Type", textArea, juce::Justification::centred, true);
 
@@ -206,7 +206,7 @@ void AudioPluginAudioProcessorEditor::delayResized() {
 	int boxY = startY + (sliderHeight * 2.5) + (boxHeight / 2);
 	this->leftTimeOption.setBounds(boxX, boxY, boxWidth, boxHeight);
 
-	boxX = (width / 2) - (boxWidth / 2);
+	boxX = (getLocalBounds().getWidth() / 2) - (boxWidth / 2);
 	boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5);
 	this->delayType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	

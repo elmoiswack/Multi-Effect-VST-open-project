@@ -123,7 +123,7 @@ void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 	
 	int boxWidth = 120;
 	int boxHeight = 70;
-	textArea.setX((width / 2) - (boxWidth / 2));
+	textArea.setX((getLocalBounds().getWidth() / 2) - (boxWidth / 2));
 	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight * 1.5) - textHeight - 10); //remove magic number
     g.drawText("Type", textArea, juce::Justification::centred, true);
 
@@ -147,10 +147,7 @@ void AudioPluginAudioProcessorEditor::reverbResized() {
     auto height = this->effectArea.getHeight();
 	int sliderWidth = 100;
     int sliderHeight = 100;
-	int boxWidth = 120;
-	int boxHeight = 70;
-	int boxX = (width / 2) - (boxWidth / 2);
-	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5); 
+
 
 	int startX = x + (sliderWidth * 1.5);
 	int startY = y + sliderHeight;
@@ -168,6 +165,11 @@ void AudioPluginAudioProcessorEditor::reverbResized() {
 	this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
 	this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]->setBounds(this->effectArea.getWidth() - sliderWidth - 20, height, sliderWidth, sliderHeight);
+
+	int boxWidth = 120;
+	int boxHeight = 70;
+	int boxX = (getLocalBounds().getWidth() / 2) - (boxWidth / 2);
+	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5); 
 
 	this->reverbType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->reverbType.setVisible(true);
