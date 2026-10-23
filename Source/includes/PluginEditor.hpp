@@ -70,6 +70,7 @@ public:
 
     void eqInit();
     void eqPaint(juce::Graphics& g);
+    void eqComputeWaveform();
     void eqResized();
     void eqHandler();
 

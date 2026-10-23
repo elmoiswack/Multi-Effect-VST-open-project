@@ -73,7 +73,7 @@ void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
 	g.drawRoundedRectangle(this->effectArea, this->cornerSizeEffectArea, 5.0f);
 
 	juce::Rectangle<float> waveformRect = {(float)getLocalBounds().getWidth() / 8, this->effectArea.getY() + 20.f, (float)getLocalBounds().getWidth() / 8 * 6, 120};
-	g.setColour(juce::Colour::fromRGB(ColorsScheme::eqPrimary[0], ColorsScheme::eqPrimary[1], ColorsScheme::eqPrimary[2]));
+	g.setColour(juce::Colour::fromRGB(ColorsScheme::eqSecondary[0], ColorsScheme::eqSecondary[1], ColorsScheme::eqSecondary[2]));
 	g.fillRoundedRectangle(waveformRect, this->cornerSizeEffectArea);
 	g.drawRoundedRectangle(waveformRect, this->cornerSizeEffectArea, 5.0f);
 
@@ -106,6 +106,7 @@ void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
         g.drawText(this->eqSliders[i]->getName(), textArea, juce::Justification::centred, true);
     }
 }
+
 
 void AudioPluginAudioProcessorEditor::eqResized() {
     auto x = this->effectArea.getX();
