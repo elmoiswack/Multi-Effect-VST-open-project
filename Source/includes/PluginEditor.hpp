@@ -79,6 +79,7 @@ public:
 
     void selectorClicked(EffectIndex effect);
     void removeFromChain(EffectIndex effect);
+    void syncChainParams();
 
     void dragChainObject(EffectIndex effect, const juce::MouseEvent& event);
     void swapChainObjects(EffectIndex effect, const juce::MouseEvent& event);

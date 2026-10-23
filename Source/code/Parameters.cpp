@@ -21,7 +21,7 @@ juce::AudioProcessorValueTreeState& Parameters::getApvts() {
 }
 
 void Parameters::initReverb(juce::AudioProcessorValueTreeState::ParameterLayout& layout) {
-	layout.add(std::make_unique<juce::AudioParameterBool>("reverb.on", "On", false));
+	layout.add(std::make_unique<juce::AudioParameterInt>("reverb.on", "On", -1, 4, -1)); //if effect is on, -1 is off, 0 till 5 is index
 	
 	layout.add(std::make_unique<juce::AudioParameterChoice>("reverb.type", "Type", juce::StringArray("Plate", "Spring", "Hall"), 0));
 
@@ -38,7 +38,7 @@ void Parameters::initReverb(juce::AudioProcessorValueTreeState::ParameterLayout&
 }
 
 void Parameters::initDistoriton(juce::AudioProcessorValueTreeState::ParameterLayout& layout) {
-	layout.add(std::make_unique<juce::AudioParameterBool>("distortion.on", "On", false));
+	layout.add(std::make_unique<juce::AudioParameterInt>("distortion.on", "On", -1, 4, -1)); //if effect is on, -1 is off, 0 till 5 is index
 
 	layout.add(std::make_unique<juce::AudioParameterChoice>("distortion.type", "Type", juce::StringArray("Distortion", "Overdive", "Saturation", "Fuzz"), 0));
 	
@@ -54,7 +54,7 @@ void Parameters::initDistoriton(juce::AudioProcessorValueTreeState::ParameterLay
 }
 
 void Parameters::initDelay(juce::AudioProcessorValueTreeState::ParameterLayout& layout) {
-	layout.add(std::make_unique<juce::AudioParameterBool>("delay.on", "On", false));
+	layout.add(std::make_unique<juce::AudioParameterInt>("delay.on", "On", -1, 4, -1)); //if effect is on, -1 is off, 0 till 5 is index
 
 	layout.add(std::make_unique<juce::AudioParameterChoice>("delay.type", "Type", juce::StringArray("Free", "Sync", "Ping-Pong"), 0));
 	
@@ -74,7 +74,7 @@ void Parameters::initDelay(juce::AudioProcessorValueTreeState::ParameterLayout& 
 }
 
 void Parameters::initChorus(juce::AudioProcessorValueTreeState::ParameterLayout& layout) {
-	layout.add(std::make_unique<juce::AudioParameterBool>("chorus.on", "On", false));
+	layout.add(std::make_unique<juce::AudioParameterInt>("chorus.on", "On", -1, 4, -1)); //if effect is on, -1 is off, 0 till 5 is index
 
 	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.delay", "Delay", 0.0f, 100.0f, 10.0f)); //ms
 	layout.add(std::make_unique<juce::AudioParameterFloat>("chorus.rate", "Rate", 0.0f, 2.0f, 0.4f)); //hz
@@ -89,20 +89,20 @@ void Parameters::initChorus(juce::AudioProcessorValueTreeState::ParameterLayout&
 }
 
 void Parameters::initEQ(juce::AudioProcessorValueTreeState::ParameterLayout& layout) {
-	layout.add(std::make_unique<juce::AudioParameterBool>("eq.on", "On", false));
+	layout.add(std::make_unique<juce::AudioParameterInt>("eq.on", "On", -1, 4, -1)); //if effect is on, -1 is off, 0 till 5 is index
 
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.frequency", "Frequency", 0.0f, 200.0f, 0.0f)); //hz
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.gain", "Gain", -30.0f, 30.0f, 0.0f)); //dB
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.quality", "Quality", -6.0f, 6.0f, 0.0f)); //dB
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.frequency", "Frequency", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20.0f)); //hz
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.gain", "Gain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f)); //dB
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.low.quality", "Quality",juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f)); //dB
 	layout.add(std::make_unique<juce::AudioParameterChoice>("eq.low.slope", "Slope", juce::StringArray("6 db", "12 db", "24 db", "36 db"), 0));
 
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.frequency", "Frequency", 200.0f, 2000.0f, 1000.0f)); //hz
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.gain", "Gain", -30.0f, 30.0f, 0.0f)); //dB
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.quality", "Quality", -6.0f, 6.0f, 0.0f)); //dB
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.frequency", "Frequency", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 1000.0f)); //hz
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.gain", "Gain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f)); //dB
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.mid.quality", "Quality",juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f)); //dB
 
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.frequency", "Frequency", 2000.0f, 20000.0f, 20000.0f)); //hz
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.gain", "Gain", -30.0f, 30.0f, 0.0f)); //dB
-	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.quality", "Quality", -6.0f, 6.0f, 0.0f)); //dB
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.frequency", "Frequency", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 1.f), 20000.0f)); //hz
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.gain", "Gain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f)); //dB
+	layout.add(std::make_unique<juce::AudioParameterFloat>("eq.high.quality", "Quality",juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f)); //dB
 	layout.add(std::make_unique<juce::AudioParameterChoice>("eq.high.slope", "Slope", juce::StringArray("6 db", "12 db", "24 db", "36 db"), 0));
 }
 

@@ -3,6 +3,27 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "Parameters.hpp"
 
+enum class ProcessingIndex {
+    REVERB,
+    DISTORTION,
+    DELAY,
+    CHORUS,
+    EQ,
+    NONE
+};
+
+struct EQBiquadParameters {
+    float b0 = 1.0f, b1 = 0.0f, b2 = 0.0f;
+    float a1 = 0.0f, a2 = 0.0f;
+};
+
+struct EQBiquadState {
+    float s1 = 0.0f, s2 = 0.0f;
+};
+
+static constexpr int maxChannels = 2;
+static constexpr int maxSlopes = 4; 
+
 //==============================================================================
 class AudioPluginAudioProcessor final : public juce::AudioProcessor
 {
@@ -44,10 +65,31 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     juce::AudioProcessorValueTreeState&  getAPVTS();
+
+    void initActiveChain();
+
+/////////////////////EQ Functions////////////////
+    void computeLowCutCoefficients(EQBiquadParameters& params, float lowFreq);
+    void computeHighCutCoefficients(EQBiquadParameters& params, float highFreq);
+    void updateEQCoefficients();
+    float calculateOutput(float x, const EQBiquadParameters& parameters, EQBiquadState& state);
+    void useEQ(float* buffer, int numSamples, int channel);
+    void resetEQState();
+
+
 private:
     //==============================================================================
-
     Parameters params{ *this };
+    double sampleRate;
+    std::array<ProcessingIndex, 5> activeChain;
+
+/////////////////////EQ Params///////////////////
+    EQBiquadParameters lowCutParameters;
+    EQBiquadParameters highCutParameters;
+    EQBiquadState  lowCutState[maxChannels][maxSlopes];
+    EQBiquadState  highCutState[maxChannels][maxSlopes];
+    int lowCutSlopes  = 1;
+    int highCutSlopes = 1;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };

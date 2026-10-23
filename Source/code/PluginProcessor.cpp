@@ -88,7 +88,10 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    juce::ignoreUnused (sampleRate, samplesPerBlock);
+    this->sampleRate = sampleRate;
+    this->resetEQState();
+
+    juce::ignoreUnused (samplesPerBlock);
 }
 
 void AudioPluginAudioProcessor::releaseResources()
@@ -121,36 +124,66 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported (const BusesLayout& layou
   #endif
 }
 
+void AudioPluginAudioProcessor::initActiveChain() {
+    int reverbOn = dynamic_cast<juce::AudioParameterInt*>(this->getAPVTS().getParameter("reverb.on"))->get();
+    int distortionOn = dynamic_cast<juce::AudioParameterInt*>(this->getAPVTS().getParameter("distortion.on"))->get();
+    int delayOn = dynamic_cast<juce::AudioParameterInt*>(this->getAPVTS().getParameter("delay.on"))->get();
+    int chorusOn = dynamic_cast<juce::AudioParameterInt*>(this->getAPVTS().getParameter("chorus.on"))->get();
+    int eqOn = dynamic_cast<juce::AudioParameterInt*>(this->getAPVTS().getParameter("eq.on"))->get();
+
+    this->activeChain.fill(ProcessingIndex::NONE);
+
+    if (reverbOn != -1) 
+        this->activeChain[reverbOn] = ProcessingIndex::REVERB;
+    if (distortionOn != -1) 
+        this->activeChain[distortionOn] = ProcessingIndex::DISTORTION;
+    if (delayOn != -1) 
+        this->activeChain[delayOn] = ProcessingIndex::DELAY;
+    if (chorusOn != -1) 
+        this->activeChain[chorusOn] = ProcessingIndex::CHORUS;
+    if (eqOn != -1) 
+        this->activeChain[eqOn] = ProcessingIndex::EQ;
+
+}
+
+
 void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages)
 {
     juce::ignoreUnused (midiMessages);
-
     juce::ScopedNoDenormals noDenormals;
+
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
+    const int numSamples = buffer.getNumSamples();
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-        juce::ignoreUnused (channelData);
-        // ..do something to the data...
+    this->initActiveChain();
+    this->updateEQCoefficients();
+
+    for (int channel = 0; channel < totalNumInputChannels; ++channel) {
+        auto* channelData = buffer.getWritePointer(channel);
+
+        for (std::size_t i = 0; i < this->activeChain.size(); i++) {
+            switch (static_cast<int>(this->activeChain[i]))
+            {
+            case static_cast<int>(ProcessingIndex::REVERB):     
+                break;
+            case static_cast<int>(ProcessingIndex::DISTORTION):  
+                break;
+            case static_cast<int>(ProcessingIndex::DELAY):       
+                break;
+            case static_cast<int>(ProcessingIndex::CHORUS):     
+                break;
+            case static_cast<int>(ProcessingIndex::EQ):
+                this->useEQ(channelData, numSamples, channel);
+                break;
+            default: break;
+            }
+        }
     }
 }
 

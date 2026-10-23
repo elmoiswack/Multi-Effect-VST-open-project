@@ -194,104 +194,125 @@ void AudioPluginAudioProcessorEditor::computeView(EffectIndex effect) {
     repaint();
 }
 
-
+void AudioPluginAudioProcessorEditor::syncChainParams() {
+    int index = 0;
+    for (auto* box : this->activeChain) {
+        if (box->getCustomEffectBoxType() == CustomEffectBoxType::ADDER)
+            continue;
+ 
+        juce::String id = box->getEffectName().toLowerCase() + ".on";
+        auto* param = dynamic_cast<juce::AudioParameterInt*>(this->processorRef.getAPVTS().getParameter(id));
+        if (param != nullptr && param->get() != index) {
+            param->beginChangeGesture();
+            *param = index;
+            param->endChangeGesture();
+        }
+        ++index;
+    }
+}
+ 
 void AudioPluginAudioProcessorEditor::selectorClicked(EffectIndex effect) {
     auto target = &this->chainCustomEffectBox[effect];
-
+ 
     if (std::find(this->activeChain.begin(), this->activeChain.end(), target) != this->activeChain.end())
         return;
-
+ 
     if (!this->activeChain.empty() && this->activeChain.back() == this->adder) {
         this->adder->setVisible(false);
         this->activeChain.pop_back();
     }
-
+ 
     this->selectCustomEffectBox[effect].setActive(true);
     this->activeChain.push_back(target);
     target->setVisible(true);
-
-    juce::String effectId = target->getEffectName().toLowerCase();
-    effectId += ".on";
-    auto param = this->processorRef.getAPVTS().getParameter(effectId);
-    param->setValueNotifyingHost(true);
-
+ 
     if (this->activeChain.size() < 5) {
         this->adder->setVisible(true);
         this->activeChain.push_back(this->adder);
     }
-
+ 
+    this->syncChainParams();
     this->computeView(effect);
 }
-
+ 
 void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
     auto target = &this->chainCustomEffectBox[effect];
-
+ 
     auto it = std::find(this->activeChain.begin(), this->activeChain.end(), target);
+    if (it == this->activeChain.end())
+        return;
+ 
     target->setVisible(false);
     this->selectCustomEffectBox[effect].setActive(false);
-    
-    juce::String effectId = target->getEffectName().toLowerCase();
-    effectId += ".on";
-    auto param = this->processorRef.getAPVTS().getParameter(effectId);
-    param->setValueNotifyingHost(false);
-
+ 
+    juce::String effectId = target->getEffectName().toLowerCase() + ".on";
+    if (auto* param = dynamic_cast<juce::AudioParameterInt*>(this->processorRef.getAPVTS().getParameter(effectId))) {
+        param->beginChangeGesture();
+        *param = -1;
+        param->endChangeGesture();
+    }
+ 
     this->activeChain.erase(it);
-
+ 
     if (std::find(this->activeChain.begin(), this->activeChain.end(), this->adder) == this->activeChain.end()) {
         this->adder->setVisible(true);
         this->activeChain.push_back(this->adder);
     }
-
+ 
+    this->syncChainParams();
+ 
     if (this->currentSelected == effect || this->activeChain.size() == 1) {
         this->computeView(EffectIndex::ADD);
         return ;
     }
     this->computeView(this->currentSelected);
 }
-
+ 
 void AudioPluginAudioProcessorEditor::dragChainObject(EffectIndex effect, const juce::MouseEvent& event) {
     this->drawMoveChainObject = true;
-
+ 
     float rectangleY      = 5.f;
     float rectangleWidth  = 180.f;
     float rectangleHeight = 90.f;
     int   slotWidth       = 200;
     int   firstSlotX      = 10;
-
+ 
     int xPos = event.getEventRelativeTo(this).getPosition().x;
-
+ 
     int slot = (xPos - firstSlotX) / slotWidth;
     slot = juce::jlimit(0, (int)this->activeChain.size() - 1, slot);
-
+ 
     float rectangleX = (float)firstSlotX + slot * slotWidth;
-
+ 
     this->moveRectangle.clear();
     this->moveRectangle.addRectangle<float>({rectangleX, rectangleY, rectangleWidth, rectangleHeight});
-
+ 
     this->computeView(this->currentSelected);
 }
-
-void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const juce::MouseEvent& event) {
-
-    int xPos = event.getEventRelativeTo(this).getPosition().x;
-    int slotWidth = 200;
+ 
+void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const juce::MouseEvent& event) { 
+    int slotWidth  = 200;
     int firstSlotX = 10;
-    int slot = (xPos - firstSlotX) / slotWidth;
-    slot = juce::jlimit(0, (int)this->activeChain.size(), slot);
-
-    int startSlot = event.getEventRelativeTo(this).getMouseDownPosition().getX() / slotWidth;
-    startSlot = juce::jlimit(0, (int)this->activeChain.size() - 1, startSlot);
-
-    auto it = this->activeChain.begin() + slot;
-    if ((*it)->getCustomEffectBoxType() == CustomEffectBoxType::ADDER) {
-        this->drawMoveChainObject = false;
+    int lastSlot   = (int)this->activeChain.size() - 1;
+ 
+    auto e = event.getEventRelativeTo(this);
+ 
+    int slot = juce::jlimit(0, lastSlot, (e.getPosition().x - firstSlotX) / slotWidth);
+    int startSlot = juce::jlimit(0, lastSlot, (e.getMouseDownPosition().x - firstSlotX) / slotWidth);
+ 
+    this->drawMoveChainObject = false;
+ 
+    auto itFirst  = this->activeChain.begin() + startSlot;
+    auto itSecond = this->activeChain.begin() + slot;
+ 
+    if (startSlot == slot || (*itFirst)->getCustomEffectBoxType()  == CustomEffectBoxType::ADDER || (*itSecond)->getCustomEffectBoxType() == CustomEffectBoxType::ADDER) {
         this->computeView(this->currentSelected);
         return ;
     }
-
-    std::iter_swap(this->activeChain.begin() + startSlot, this->activeChain.begin() + slot);
-
-    this->drawMoveChainObject = false;
+    std::iter_swap(itFirst, itSecond);
+ 
+    this->syncChainParams();
+ 
     this->computeView(this->currentSelected);
 }
 
