@@ -146,7 +146,6 @@ void AudioPluginAudioProcessor::initActiveChain() {
 
 }
 
-
 void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                                               juce::MidiBuffer& midiMessages)
 {
@@ -156,15 +155,15 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; i++)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    const int numSamples = buffer.getNumSamples();
+    int numSamples = buffer.getNumSamples();
 
     this->initActiveChain();
     this->updateEQCoefficients();
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel) {
+    for (int channel = 0; channel < totalNumInputChannels; channel++) {
         auto* channelData = buffer.getWritePointer(channel);
 
         for (std::size_t i = 0; i < this->activeChain.size(); i++) {

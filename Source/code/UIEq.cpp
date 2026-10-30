@@ -67,6 +67,22 @@ void AudioPluginAudioProcessorEditor::eqHandler() {
 	};
 }
 
+
+
+juce::Path AudioPluginAudioProcessorEditor::eqComputeWaveform() {
+	juce::Path pathToDraw; 
+
+	//get audio inputchannels from processor
+	std::vector<std::complex<double>> result = {};
+	int numChannels = 2; //get from audio inputchannels
+
+	for (int i = 0; i < numChannels; i++) {
+
+		result[i] = this->myFFT();
+	}
+
+}
+
 void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::eqBackground[0], ColorsScheme::eqBackground[1], ColorsScheme::eqBackground[2]));
 	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);

@@ -12,12 +12,12 @@ enum class ProcessingIndex {
     NONE
 };
 
-struct EQBiquadParameters {
+struct BiquadParameters {
     float b0 = 1.0f, b1 = 0.0f, b2 = 0.0f;
     float a1 = 0.0f, a2 = 0.0f;
 };
 
-struct EQBiquadState {
+struct BiquadState {
     float s1 = 0.0f, s2 = 0.0f;
 };
 
@@ -69,10 +69,10 @@ public:
     void initActiveChain();
 
 /////////////////////EQ Functions////////////////
-    void computeLowCutCoefficients(EQBiquadParameters& params, float lowFreq);
-    void computeHighCutCoefficients(EQBiquadParameters& params, float highFreq);
+    void computeLowCutCoefficients(BiquadParameters& params, float lowFreq);
+    void computeHighCutCoefficients(BiquadParameters& params, float highFreq);
     void updateEQCoefficients();
-    float calculateOutput(float x, const EQBiquadParameters& parameters, EQBiquadState& state);
+    float calculateOutput(float x, BiquadParameters& parameters, BiquadState& state);
     void useEQ(float* buffer, int numSamples, int channel);
     void resetEQState();
 
@@ -84,10 +84,10 @@ private:
     std::array<ProcessingIndex, 5> activeChain;
 
 /////////////////////EQ Params///////////////////
-    EQBiquadParameters lowCutParameters;
-    EQBiquadParameters highCutParameters;
-    EQBiquadState  lowCutState[maxChannels][maxSlopes];
-    EQBiquadState  highCutState[maxChannels][maxSlopes];
+    BiquadParameters lowCutParameters;
+    BiquadParameters highCutParameters;
+    BiquadState  lowCutState[maxChannels][maxSlopes];
+    BiquadState  highCutState[maxChannels][maxSlopes];
     int lowCutSlopes  = 1;
     int highCutSlopes = 1;
 
