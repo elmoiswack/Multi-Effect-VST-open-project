@@ -81,15 +81,18 @@ void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);
 	g.drawRoundedRectangle(this->effectArea, this->cornerSizeEffectArea, 5.0f);
 
-	auto x = this->effectArea.getX();
-    auto y = this->effectArea.getY();
-    auto width = this->effectArea.getWidth();
+	int x = static_cast<int>(this->effectArea.getX());
+    int y = static_cast<int>(this->effectArea.getY());
+    int width = static_cast<int>(this->effectArea.getWidth());
+	int height = static_cast<int>(this->effectArea.getHeight());
 	int sliderWidth = 100;
     int sliderHeight = 100;
 	int textWidth = 100;
 	int textHeight = 20;
 
-	int startX = x + (sliderWidth * 1.5);
+	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
+	int sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
+	int startX = x + sliderWidthOffset;
 	int startY = y + sliderHeight;
 	
 	juce::Rectangle<int> textArea = {startX, startY, textWidth, textHeight};
@@ -100,79 +103,91 @@ void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 	textArea.setY(startY - textHeight);
     g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LEFTDELAY)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
+	textArea.setY(startY + sliderheightOffset - textHeight);
     g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LEFTFEEDBACK)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(width / 2 - (sliderWidth * 1.8));
+	sliderWidthOffset = static_cast<int>(sliderWidth * 1.8);
+	textArea.setX(width / 2 - sliderWidthOffset);
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
     g.drawText(this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(width / 2 - (sliderWidth * 1.8) + (getLocalBounds().getWidth() / 4));
+	textArea.setX(width / 2 - sliderWidthOffset + (getLocalBounds().getWidth() / 4));
     g.drawText(this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth);
+	sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
+	textArea.setX(width - sliderWidthOffset - sliderWidth);
 	textArea.setY(startY - textHeight);
     g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
+	textArea.setY(startY + sliderheightOffset - textHeight);
     g.drawText(this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20);
-	textArea.setY(this->effectArea.getHeight() - textHeight);
+	int textOffsetX = 20;
+	textArea.setX(width - sliderWidth - textOffsetX);
+	textArea.setY(height - textHeight);
 	g.drawText(this->delaySliders[static_cast<int>(DelayIndex::MIX)]->getName(), textArea, juce::Justification::centred, true);
 
 	int boxWidth = 120;
 	int boxHeight = 70;
-	textArea.setX(x + (sliderWidth * 1.5));
-	textArea.setY(startY + (sliderHeight * 2.5) + (boxHeight / 2) - textHeight - 7);
+	int textOffsetY = 7;
+	sliderheightOffset = static_cast<int>(sliderHeight * 2.5);
+	int boxOffsetY = static_cast<int>(boxHeight * 1.5);
+
+	textArea.setX(x + sliderWidthOffset);
+	textArea.setY(startY + sliderheightOffset + (boxHeight / 2) - textHeight - textOffsetY);
     g.drawText("Note", textArea, juce::Justification::centred, true);
 	
 	textArea.setX((getLocalBounds().getWidth() / 2) - (boxWidth / 2));
-	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight * 1.5) - textHeight - 7); //remove magic number
+	textArea.setY((getLocalBounds().getHeight() / 2) - boxOffsetY - textHeight - textOffsetY);
     g.drawText("Type", textArea, juce::Justification::centred, true);
 
-	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth);
-	textArea.setY(startY + (sliderHeight * 2.5) + (boxHeight / 2) - textHeight - 7);
+	textArea.setX(width - sliderWidthOffset - sliderWidth);
+	textArea.setY(startY + sliderheightOffset + (boxHeight / 2) - textHeight - textOffsetY);
     g.drawText("Note", textArea, juce::Justification::centred, true);
 }
 
 void AudioPluginAudioProcessorEditor::delayResized() {
-    auto x = this->effectArea.getX();
-    auto y = this->effectArea.getY();
-    auto width = this->effectArea.getWidth();
-    auto height = this->effectArea.getHeight();
+    int x = static_cast<int>(this->effectArea.getX());
+    int y = static_cast<int>(this->effectArea.getY());
+    int width = static_cast<int>(this->effectArea.getWidth());
+    int height = static_cast<int>(this->effectArea.getHeight());
 	int sliderWidth = 100;
     int sliderHeight = 100;
 	int boxWidth = 120;
 	int boxHeight = 70;
 
-	int startX = x + (sliderWidth * 1.5);
+	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
+	int sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
+	int startX = x + sliderWidthOffset;
 	int startY = y + sliderHeight;
-	this->delaySliders[static_cast<int>(DelayIndex::LEFTDELAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->delaySliders[static_cast<int>(DelayIndex::LEFTFEEDBACK)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
 
-	startX = width / 2 - (sliderWidth * 1.8);
+	this->delaySliders[static_cast<int>(DelayIndex::LEFTDELAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::LEFTFEEDBACK)]->setBounds(startX, startY + sliderheightOffset, sliderWidth, sliderHeight);
+
+	startX = width / 2 - static_cast<int>(sliderWidth * 1.8);
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
 	this->delaySliders[static_cast<int>(DelayIndex::LOWCUT)]->setBounds(startX, startY, sliderWidth, sliderHeight);
 	this->delaySliders[static_cast<int>(DelayIndex::HIGHCUT)]->setBounds(startX + (getLocalBounds().getWidth() / 4), startY, sliderWidth, sliderHeight);
 
-	startX = width - (sliderWidth * 1.5) - sliderWidth;
+	startX = width - sliderWidthOffset - sliderWidth;
 	startY = y + sliderHeight;
 	this->delaySliders[static_cast<int>(DelayIndex::RIGHTDELAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->delaySliders[static_cast<int>(DelayIndex::RIGHTFEEDBACK)]->setBounds(startX, startY + sliderheightOffset, sliderWidth, sliderHeight);
 
 	this->delaySliders[static_cast<int>(DelayIndex::MIX)]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
-	int boxX = x + (sliderWidth * 1.5);
-	int boxY = startY + (sliderHeight * 2.5) + (boxHeight / 2);
+	sliderheightOffset = static_cast<int>(sliderHeight * 2.5);
+	int boxX = x + sliderWidthOffset;
+	int boxY = startY + sliderheightOffset + (boxHeight / 2);
+	int boxOffsetY = static_cast<int>(boxHeight * 1.5);
 	this->leftTimeOption.setBounds(boxX, boxY, boxWidth, boxHeight);
 
 	boxX = (getLocalBounds().getWidth() / 2) - (boxWidth / 2);
-	boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5);
+	boxY = (getLocalBounds().getHeight() / 2) - boxOffsetY;
 	this->delayType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	
-	boxX = width - (sliderWidth * 1.5) - sliderWidth;
-	boxY = startY + (sliderHeight * 2.5) + (boxHeight / 2);
+	boxX = width - sliderWidthOffset - sliderWidth;
+	boxY = startY + sliderheightOffset + (boxHeight / 2);
 	this->rightTimeOption.setBounds(boxX, boxY, boxWidth, boxHeight);
 
 	this->delayType.setVisible(true);

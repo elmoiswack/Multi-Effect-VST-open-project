@@ -58,15 +58,18 @@ void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);
 	g.drawRoundedRectangle(this->effectArea, this->cornerSizeEffectArea, 5.0f);
 
-	auto x = this->effectArea.getX();
-    auto y = this->effectArea.getY();
-    auto width = this->effectArea.getWidth();
+	int x = static_cast<int>(this->effectArea.getX());
+    int y = static_cast<int>(this->effectArea.getY());
+    int width = static_cast<int>(this->effectArea.getWidth());
+	int height = static_cast<int>(this->effectArea.getHeight());
 	int sliderWidth = 100;
     int sliderHeight = 100;
 	int textWidth = 100;
 	int textHeight = 20;
 
-	int startX = x + (sliderWidth * 1.5);
+	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
+	int sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
+	int startX = x + sliderWidthOffset;
 	int startY = y + sliderHeight;
 	
 	juce::Rectangle<int> textArea = {startX, startY, textWidth, textHeight};
@@ -77,65 +80,71 @@ void AudioPluginAudioProcessorEditor::reverbPaint(juce::Graphics& g) {
 	textArea.setY(startY - textHeight);
     g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::DECAY)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
+	textArea.setY(startY + sliderheightOffset - textHeight);
     g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::PREDELAY)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(width / 2 - (sliderWidth * 1.8));
+	sliderWidthOffset = static_cast<int>(sliderWidth * 1.8);
+	textArea.setX(width / 2 - sliderWidthOffset);
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
     g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::TONE)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(width / 2 - (sliderWidth * 1.8) + (getLocalBounds().getWidth() / 4));
+	textArea.setX(width / 2 - sliderWidthOffset + (getLocalBounds().getWidth() / 4));
     g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::SIZE)]->getName(), textArea, juce::Justification::centred, true);
 	
+	sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
 	int boxWidth = 120;
 	int boxHeight = 70;
+	int boxOffsetY = static_cast<int>(boxHeight * 1.5) + 10;
 	textArea.setX((getLocalBounds().getWidth() / 2) - (boxWidth / 2));
-	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight * 1.5) - textHeight - 10); //remove magic number
+	textArea.setY((getLocalBounds().getHeight() / 2) - boxOffsetY - textHeight);
     g.drawText("Type", textArea, juce::Justification::centred, true);
 
-	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth);
+	textArea.setX(width - sliderWidthOffset - sliderWidth);
 	textArea.setY(startY - textHeight);
     g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
+	textArea.setY(startY + sliderheightOffset - textHeight);
     g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20);
-	textArea.setY(this->effectArea.getHeight() - textHeight);
+	int textOffsetX = 20;
+	textArea.setX(width - sliderWidth - textOffsetX);
+	textArea.setY(height - textHeight);
 	g.drawText(this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]->getName(), textArea, juce::Justification::centred, true);
-	
 }
 
 void AudioPluginAudioProcessorEditor::reverbResized() {
-    auto x = this->effectArea.getX();
-    auto y = this->effectArea.getY();
-    auto width = this->effectArea.getWidth();
-    auto height = this->effectArea.getHeight();
+    int x = static_cast<int>(this->effectArea.getX());
+    int y = static_cast<int>(this->effectArea.getY());
+    int width = static_cast<int>(this->effectArea.getWidth());
+    int height = static_cast<int>(this->effectArea.getHeight());
 	int sliderWidth = 100;
     int sliderHeight = 100;
 
-
-	int startX = x + (sliderWidth * 1.5);
+	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
+	int sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
+	int startX = x + sliderWidthOffset;
 	int startY = y + sliderHeight;
 	this->reverbSliders[static_cast<int>(ReverbIndex::DECAY)]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->reverbSliders[static_cast<int>(ReverbIndex::PREDELAY)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::PREDELAY)]->setBounds(startX, startY + sliderheightOffset, sliderWidth, sliderHeight);
 
-	startX = width / 2 - (sliderWidth * 1.8);
+	startX = width / 2 - static_cast<int>(sliderWidth * 1.8);
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
 	this->reverbSliders[static_cast<int>(ReverbIndex::TONE)]->setBounds(startX, startY, sliderWidth, sliderHeight);
 	this->reverbSliders[static_cast<int>(ReverbIndex::SIZE)]->setBounds(startX + (getLocalBounds().getWidth() / 4), startY, sliderWidth, sliderHeight);
 
-	startX = width - (sliderWidth * 1.5) - sliderWidth;
+	startX = width - sliderWidthOffset - sliderWidth;
 	startY = y + sliderHeight;
 	this->reverbSliders[static_cast<int>(ReverbIndex::HIGHCUT)]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->reverbSliders[static_cast<int>(ReverbIndex::LOWCUT)]->setBounds(startX, startY + sliderheightOffset, sliderWidth, sliderHeight);
 
-	this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]->setBounds(this->effectArea.getWidth() - sliderWidth - 20, height, sliderWidth, sliderHeight);
+	int textOffsetX = 20;
+	this->reverbSliders[static_cast<int>(ReverbIndex::MIX)]->setBounds(width - sliderWidth - textOffsetX, height, sliderWidth, sliderHeight);
 
 	int boxWidth = 120;
 	int boxHeight = 70;
+	int boxOffsetY = static_cast<int>(boxHeight * 1.5);
 	int boxX = (getLocalBounds().getWidth() / 2) - (boxWidth / 2);
-	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5); 
+	int boxY = (getLocalBounds().getHeight() / 2) - boxOffsetY;
 
 	this->reverbType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->reverbType.setVisible(true);

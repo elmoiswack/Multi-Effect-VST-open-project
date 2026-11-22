@@ -77,10 +77,11 @@ juce::Path AudioPluginAudioProcessorEditor::eqComputeWaveform() {
 	int numChannels = 2; //get from audio inputchannels
 
 	for (int i = 0; i < numChannels; i++) {
-
-		result[i] = this->myFFT();
+		//call fft function
+	
 	}
 
+	return pathToDraw;
 }
 
 void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
@@ -95,17 +96,18 @@ void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
 
 	//TODO: create path from incoming data to represent waveform
 
-	auto x = this->effectArea.getX();
-	auto y = this->effectArea.getY();
-	auto width = this->effectArea.getWidth();
-	auto height = this->effectArea.getHeight();
+	int x = static_cast<int>(this->effectArea.getX());
+	int y = static_cast<int>(this->effectArea.getY());
+	int width = static_cast<int>(this->effectArea.getWidth());
+	int height = static_cast<int>(this->effectArea.getHeight());
 	
 	int sliderWidth = 90;
 	
 	int startX = x + (width / 4) - sliderWidth;
-	int startY = y + (height / 2.5f) - 20.f;
-    int xOffset = width / 4 + sliderWidth / 2;
-	int yOffset = 110.f;
+	int startOffsetY = 20;
+	int startY = y + static_cast<int>(height / 2.5) - startOffsetY;
+    int startOffsetX = width / 4 + sliderWidth / 2;
+	startOffsetY = 110;
 	int textWidth = 100;
 	int textHeight = 20;
 	
@@ -114,37 +116,36 @@ void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
 	g.setColour(juce::Colour::fromRGB(ColorsScheme::eqSecondary[0], ColorsScheme::eqSecondary[1], ColorsScheme::eqSecondary[2]));
 	g.setFont(20.f);
 	for (std::size_t i = 0; i < this->eqSliders.size(); ++i) {
-        int column = i / 3;
-        int row = i % 3;
+        int column = static_cast<int>(i) / 3;
+        int row = static_cast<int>(i) % 3;
 
-		textArea.setX(startX + (column * xOffset));
-		textArea.setY(startY + (row * yOffset));
+		textArea.setX(startX + (column * startOffsetX));
+		textArea.setY(startY + (row * startOffsetY));
         g.drawText(this->eqSliders[i]->getName(), textArea, juce::Justification::centred, true);
     }
 }
 
-
 void AudioPluginAudioProcessorEditor::eqResized() {
-    auto x = this->effectArea.getX();
-    auto y = this->effectArea.getY();
-    auto width = this->effectArea.getWidth();
-    auto height = this->effectArea.getHeight();
+    int x = static_cast<int>(this->effectArea.getX());
+    int y = static_cast<int>(this->effectArea.getY());
+    int width = static_cast<int>(this->effectArea.getWidth());
+    int height = static_cast<int>(this->effectArea.getHeight());
 
     int sliderWidth = 80;
     int sliderHeight = 80;
 
     int startX = x + (width / 4) - sliderWidth;
-    int startY = y + (height / 2.5f);
-    int xOffset = width / 4 + sliderWidth / 2;
-    int yOffset = 110;
+    int startY = y + static_cast<int>(height / 2.5);
+    int startOffsetX = width / 4 + sliderWidth / 2;
+    int startOffsetY = 110;
 
     for (std::size_t i = 0; i < this->eqSliders.size(); ++i) {
-        int column = i / 3;
-        int row = i % 3;
+        int column = static_cast<int>(i) / 3;
+        int row = static_cast<int>(i) % 3;
 
         this->eqSliders[i]->setBounds(
-            startX + (column * xOffset),
-            startY + (row * yOffset),
+            startX + (column * startOffsetX),
+            startY + (row * startOffsetY),
             sliderWidth,
             sliderHeight
         );
@@ -153,10 +154,12 @@ void AudioPluginAudioProcessorEditor::eqResized() {
 
 	int boxWidth = 70;
 	int boxHeight = 50;
+	int boxOffsetX = 20;
+	int boxY = (startY + static_cast<int>((1 % 3) * startOffsetY)) + (sliderHeight / 4);
 
-	this->lowSlope.setBounds(startX - boxWidth - 20, (startY + ((1 % 3) * yOffset)) + (sliderHeight / 4), boxWidth, boxHeight);
+	this->lowSlope.setBounds(startX - boxWidth - boxOffsetX, boxY, boxWidth, boxHeight);
 	this->lowSlope.setVisible(true);
-	this->highSlope.setBounds((startX + (xOffset * 2)) + boxWidth + 20, (startY + ((1 % 3) * yOffset)) + (sliderHeight / 4), boxWidth, boxHeight);
+	this->highSlope.setBounds(startX + (startOffsetX * 2) + boxWidth + boxOffsetX, boxY, boxWidth, boxHeight);
 	this->highSlope.setVisible(true);
 
 }

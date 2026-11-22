@@ -14,6 +14,8 @@ void CustomLAFCombo::positionComboBoxText(juce::ComboBox& box, juce::Label& labe
 }
 
 void CustomLAFCombo::drawComboBox(juce::Graphics& g, int width, int height, bool isButtonDown, int buttonX, int buttonY, int buttonW, int buttonH, juce::ComboBox& box) {
+    juce::ignoreUnused(isButtonDown);
+    
     auto bounds = juce::Rectangle<float>(0.0f, 0.0f, (float) width, (float) height);
 
     g.setColour(box.findColour(juce::ComboBox::backgroundColourId));

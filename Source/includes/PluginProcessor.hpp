@@ -80,7 +80,7 @@ public:
 private:
     //==============================================================================
     Parameters params{ *this };
-    double sampleRate;
+    double currentSampleRate;
     std::array<ProcessingIndex, 5> activeChain;
 
 /////////////////////EQ Params///////////////////

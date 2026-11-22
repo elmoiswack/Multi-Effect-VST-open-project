@@ -47,8 +47,8 @@ public:
     std::function<void(EffectIndex)> onLeftClickAdd;
 
 	//chain box functions
-    std::function<void(EffectIndex, const juce::MouseEvent&)> onLeftClickDragEffect;
-	std::function<void(EffectIndex, const juce::MouseEvent&)> onLeftClickReplaceAfterDrag;
+    std::function<void(const juce::MouseEvent&)> onLeftClickDragEffect;
+	std::function<void(const juce::MouseEvent&)> onLeftClickReplaceAfterDrag;
 	std::function<void(EffectIndex)> onLeftClickShowEffect;
     std::function<void(EffectIndex)> onLeftClickRemove;
 

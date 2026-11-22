@@ -110,8 +110,6 @@ void CustomEffectBox::paint(juce::Graphics& g) {
         g.fillPath(verticle);
         g.fillPath(horizontal);
     } else {
-        // juce::FontOptions font("FreeSans", 40.0f, juce::Font::bold);
-        // std::cout << font.getTypeface() << std::endl;
         g.setColour(juce::Colour::fromRGB(this->color[0], this->color[1], this->color[2]));
         g.setFont(30.f);
         g.drawText(this->effectName, getLocalBounds(), juce::Justification::centred);
@@ -122,10 +120,11 @@ void CustomEffectBox::resized() {
 	int width = getWidth();
 	int svgHeight = 15.0f;
 	int svgWidth = 15.0f;
+    int svgX = static_cast<int>(width - (svgWidth * 1.5f));
+    int svgY = 10;
 
-	if (this->type == CustomEffectBoxType::CHAIN) {
-		this->drawableIcon.setBounds(width - (svgWidth * 1.5f), 10.0f, svgWidth, svgHeight);
-	}
+	if (this->type == CustomEffectBoxType::CHAIN)
+		this->drawableIcon.setBounds(svgX, svgY, svgWidth, svgHeight);
 }
 
 void CustomEffectBox::mouseDown(const juce::MouseEvent& event)
@@ -141,13 +140,13 @@ void CustomEffectBox::mouseDown(const juce::MouseEvent& event)
 
 void CustomEffectBox::mouseDrag(const juce::MouseEvent& event) {
     if (onLeftClickDragEffect && this->type == CustomEffectBoxType::CHAIN) {
-        onLeftClickDragEffect(this->effectIndex, event);
+        onLeftClickDragEffect(event);
     }
 }
 
 void CustomEffectBox::mouseUp(const juce::MouseEvent& event) {
     if (onLeftClickReplaceAfterDrag && this->type == CustomEffectBoxType::CHAIN) {
-        onLeftClickReplaceAfterDrag(this->effectIndex, event);
+        onLeftClickReplaceAfterDrag(event);
     }
 }
 

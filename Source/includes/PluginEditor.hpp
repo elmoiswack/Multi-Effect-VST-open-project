@@ -70,7 +70,7 @@ public:
 
     void eqInit();
     void eqPaint(juce::Graphics& g);
-    std::vector<std::complex<double>> myFFT(std::vector<std::complex<double>>& array);
+    //std::vector<std::complex<double>> myFFT(std::vector<std::complex<double>>& array);
     juce::Path eqComputeWaveform();
     void eqResized();
     void eqHandler();
@@ -83,8 +83,8 @@ public:
     void removeFromChain(EffectIndex effect);
     void syncChainParams();
 
-    void dragChainObject(EffectIndex effect, const juce::MouseEvent& event);
-    void swapChainObjects(EffectIndex effect, const juce::MouseEvent& event);
+    void dragChainObject(const juce::MouseEvent& event);
+    void swapChainObjects(const juce::MouseEvent& event);
 
     void setSlidersVisable(std::vector<std::unique_ptr<CustomSlider>>& container, bool value);
 

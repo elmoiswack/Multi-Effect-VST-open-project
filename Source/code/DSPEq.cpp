@@ -1,30 +1,30 @@
 #include "PluginProcessor.hpp"
 #include <cmath>
 
-void AudioPluginAudioProcessor::computeLowCutCoefficients(BiquadParameters& params, float lowFreq) {
-	float w0 = 2 * M_PI * (lowFreq / this->sampleRate);
+void AudioPluginAudioProcessor::computeLowCutCoefficients(BiquadParameters& parameters, float lowFreq) {
+	float w0 = 2.f * static_cast<float>(M_PI * (lowFreq / this->currentSampleRate));
 	float cosw  = std::cos(w0);
-	float alpha = std::sin(w0) / (2 * (1 / std::sqrt(2)));
+	float alpha = std::sin(w0) / (2 * (1 / static_cast<float>(std::sqrt(2))));
 	float a0 = 1 + alpha;
 
-	params.a1 = (-2 * cosw) / a0;
-	params.a2 = (1 - alpha) / a0;
-	params.b0 = ((1 + cosw) / 2) / a0;
-	params.b1 = -(1 + cosw) / a0;
-	params.b2 = ((1 + cosw) / 2) / a0;
+	parameters.a1 = (-2 * cosw) / a0;
+	parameters.a2 = (1 - alpha) / a0;
+	parameters.b0 = ((1 + cosw) / 2) / a0;
+	parameters.b1 = -(1 + cosw) / a0;
+	parameters.b2 = ((1 + cosw) / 2) / a0;
 }
 
-void AudioPluginAudioProcessor::computeHighCutCoefficients(BiquadParameters& params, float highFreq) {
-	float w0 = 2 * M_PI * (highFreq / this->sampleRate);
+void AudioPluginAudioProcessor::computeHighCutCoefficients(BiquadParameters& parameters, float highFreq) {
+	float w0 = 2.f * static_cast<float>(M_PI * (highFreq / this->currentSampleRate));
 	float cosw  = std::cos(w0);
-	float alpha = std::sin(w0) / (2 * (1 / std::sqrt(2)));
+	float alpha = std::sin(w0) / (2 * (1 / static_cast<float>(std::sqrt(2))));
 	float a0 = 1 + alpha;
 
-	params.a1 = (-2 * cosw) / a0;
-	params.a2 = (1 - alpha) / a0;
-	params.b0 = ((1 - cosw) / 2) / a0;
-	params.b1 = (1 - cosw) / a0;
-	params.b2 = ((1 - cosw) / 2) / a0;
+	parameters.a1 = (-2 * cosw) / a0;
+	parameters.a2 = (1 - alpha) / a0;
+	parameters.b0 = ((1 - cosw) / 2) / a0;
+	parameters.b1 = (1 - cosw) / a0;
+	parameters.b2 = ((1 - cosw) / 2) / a0;
 }
 
 void AudioPluginAudioProcessor::updateEQCoefficients() {
@@ -41,7 +41,6 @@ void AudioPluginAudioProcessor::updateEQCoefficients() {
 
     this->lowCutSlopes  = juce::jlimit(1, maxSlopes, lowIdx + 1);
     this->highCutSlopes = juce::jlimit(1, maxSlopes, highIdx + 1);
-
 }
 
 float AudioPluginAudioProcessor::calculateOutput(float x, BiquadParameters& parameters, BiquadState& state) {
@@ -56,15 +55,15 @@ void AudioPluginAudioProcessor::useEQ(float* buffer, int numSamples, int channel
         return;
 
     for (int i = 0; i < numSamples; i++) {
-        float x = buffer[i];
+        float bufferSample = buffer[i];
 
         for (int index = 0; index < lowCutSlopes; index++)
-            x = calculateOutput(x, this->lowCutParameters, this->lowCutState[channel][index]);
+            bufferSample = calculateOutput(bufferSample, this->lowCutParameters, this->lowCutState[channel][index]);
 
         for (int index = 0; index < lowCutSlopes; index++)
-            x = calculateOutput(x, this->highCutParameters, this->highCutState[channel][index]);
+            bufferSample = calculateOutput(bufferSample, this->highCutParameters, this->highCutState[channel][index]);
 
-        buffer[i] = x;
+        buffer[i] = bufferSample;
     }
 }
 

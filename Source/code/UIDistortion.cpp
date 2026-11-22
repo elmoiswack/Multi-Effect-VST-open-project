@@ -57,16 +57,19 @@ void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
 	g.fillRoundedRectangle(this->effectArea, this->cornerSizeEffectArea);
 	g.drawRoundedRectangle(this->effectArea, this->cornerSizeEffectArea, 5.0f);
 
-	auto x = this->effectArea.getX();
-    auto y = this->effectArea.getY();
-    auto width = this->effectArea.getWidth();
+	int x = static_cast<int>(this->effectArea.getX());
+    int y = static_cast<int>(this->effectArea.getY());
+    int width = static_cast<int>(this->effectArea.getWidth());
+	int height = static_cast<int>(this->effectArea.getHeight());
 	int sliderWidth = 100;
     int sliderHeight = 100;
 	int textWidth = 150;
 	int textHeight = 20;
 	int textOffestX = 25;
 
-	int startX = x + (sliderWidth * 1.5) - textOffestX;
+	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
+	int sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
+	int startX = x + sliderWidthOffset - textOffestX;
 	int startY = y + sliderHeight;
 	
 	juce::Rectangle<int> textArea = {startX, startY, textWidth, textHeight};
@@ -77,59 +80,64 @@ void AudioPluginAudioProcessorEditor::distortionPaint(juce::Graphics& g) {
 	textArea.setY(startY - textHeight);
     g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::DRIVE)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
+	textArea.setY(startY + sliderheightOffset - textHeight);
     g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::TONE)]->getName(), textArea, juce::Justification::centred, true);
 
 	int boxWidth = 120;
 	int boxHeight = 70;
+	int boxOffsetY = static_cast<int>(boxHeight * 1.5) + 10;
 	textArea.setX((getLocalBounds().getWidth() / 2) - (boxWidth / 2));
-	textArea.setY((getLocalBounds().getHeight() / 2) - (boxHeight * 1.5) - textHeight - 10); //remove magic number
+	textArea.setY((getLocalBounds().getHeight() / 2) - boxOffsetY - textHeight);
     g.drawText("Type", textArea, juce::Justification::centred, true);
 
 	textArea.setX(width / 2 - (sliderWidth / 2) - textOffestX);
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
 	g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::OUTPUTGAIN)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(width - (sliderWidth * 1.5) - sliderWidth - textOffestX);
+	textArea.setX(width - sliderWidthOffset - sliderWidth - textOffestX);
 	textArea.setY(startY - textHeight);
     g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::HIGHCUT)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setY(startY + (sliderHeight * 1.5) - textHeight);
+	textArea.setY(startY + sliderheightOffset - textHeight);
     g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::LOWCUT)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(this->effectArea.getWidth() - sliderWidth - 20 - textOffestX);
-	textArea.setY(this->effectArea.getHeight() - textHeight);
+	textOffestX += 20;
+	textArea.setX(width - sliderWidth - textOffestX);
+	textArea.setY(height - textHeight);
 	g.drawText(this->distortionSliders[static_cast<int>(DistortionIndex::MIX)]->getName(), textArea, juce::Justification::centred, true);
 }
 
 void AudioPluginAudioProcessorEditor::distortionResized() {
-    auto x = this->effectArea.getX();
-    auto y = this->effectArea.getY();
-    auto width = this->effectArea.getWidth();
-    auto height = this->effectArea.getHeight();
+    int x = static_cast<int>(this->effectArea.getX());
+    int y = static_cast<int>(this->effectArea.getY());
+    int width = static_cast<int>(this->effectArea.getWidth());
+    int height = static_cast<int>(this->effectArea.getHeight());
 	int sliderWidth = 100;
     int sliderHeight = 100;
 
-	int startX = x + (sliderWidth * 1.5);
+	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
+	int sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
+	int startX = x + sliderWidthOffset;
 	int startY = y + sliderHeight;
 	this->distortionSliders[static_cast<int>(DistortionIndex::DRIVE)]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->distortionSliders[static_cast<int>(DistortionIndex::TONE)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::TONE)]->setBounds(startX, startY + sliderheightOffset, sliderWidth, sliderHeight);
 
 	startX = width / 2 - (sliderWidth / 2);
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
 	this->distortionSliders[static_cast<int>(DistortionIndex::OUTPUTGAIN)]->setBounds(startX, startY, sliderWidth, sliderHeight);
 
-	startX = width - (sliderWidth * 1.5) - sliderWidth;
+	startX = width - sliderWidthOffset - sliderWidth;
 	startY = y + sliderHeight;
 	this->distortionSliders[static_cast<int>(DistortionIndex::HIGHCUT)]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	this->distortionSliders[static_cast<int>(DistortionIndex::LOWCUT)]->setBounds(startX, startY + (sliderHeight * 1.5), sliderWidth, sliderHeight);
+	this->distortionSliders[static_cast<int>(DistortionIndex::LOWCUT)]->setBounds(startX, startY + sliderheightOffset, sliderWidth, sliderHeight);
 
 	this->distortionSliders[static_cast<int>(DistortionIndex::MIX)]->setBounds(width - sliderWidth - 20, height, sliderWidth, sliderHeight);
 
 	int boxWidth = 120;
 	int boxHeight = 70;
+	int boxOffsetY = static_cast<int>(boxHeight * 1.5);
 	int boxX = (getLocalBounds().getWidth() / 2) - (boxWidth / 2);
-	int boxY = (getLocalBounds().getHeight() / 2) - (boxHeight * 1.5);
+	int boxY = (getLocalBounds().getHeight() / 2) - boxOffsetY;
 
 	this->distortionType.setBounds(boxX, boxY, boxWidth, boxHeight);
 	this->distortionType.setVisible(true);

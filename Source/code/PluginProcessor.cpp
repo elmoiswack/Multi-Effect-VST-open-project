@@ -88,7 +88,7 @@ void AudioPluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPer
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    this->sampleRate = sampleRate;
+    this->currentSampleRate = sampleRate;
     this->resetEQState();
 
     juce::ignoreUnused (samplesPerBlock);
@@ -134,15 +134,15 @@ void AudioPluginAudioProcessor::initActiveChain() {
     this->activeChain.fill(ProcessingIndex::NONE);
 
     if (reverbOn != -1) 
-        this->activeChain[reverbOn] = ProcessingIndex::REVERB;
+        this->activeChain[static_cast<std::size_t>(reverbOn)] = ProcessingIndex::REVERB;
     if (distortionOn != -1) 
-        this->activeChain[distortionOn] = ProcessingIndex::DISTORTION;
+        this->activeChain[static_cast<std::size_t>(distortionOn)] = ProcessingIndex::DISTORTION;
     if (delayOn != -1) 
-        this->activeChain[delayOn] = ProcessingIndex::DELAY;
+        this->activeChain[static_cast<std::size_t>(delayOn)] = ProcessingIndex::DELAY;
     if (chorusOn != -1) 
-        this->activeChain[chorusOn] = ProcessingIndex::CHORUS;
+        this->activeChain[static_cast<std::size_t>(chorusOn)] = ProcessingIndex::CHORUS;
     if (eqOn != -1) 
-        this->activeChain[eqOn] = ProcessingIndex::EQ;
+        this->activeChain[static_cast<std::size_t>(eqOn)] = ProcessingIndex::EQ;
 
 }
 

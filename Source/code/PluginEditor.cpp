@@ -122,7 +122,8 @@ void AudioPluginAudioProcessorEditor::resized() {
     int chainBoxHeight = 80;
 
     for (std::size_t i = 0; i < this->activeChain.size(); i++) {
-        this->activeChain[i]->setBounds(startX + (i * spacing), chainBoxY, chainBoxWidth, chainBoxHeight);
+        int chainBoxX = startX + (static_cast<int>(i) * spacing);
+        this->activeChain[i]->setBounds(chainBoxX, chainBoxY, chainBoxWidth, chainBoxHeight);
     }
 
     switch (this->currentSelected)
@@ -268,7 +269,7 @@ void AudioPluginAudioProcessorEditor::removeFromChain(EffectIndex effect) {
     this->computeView(this->currentSelected);
 }
  
-void AudioPluginAudioProcessorEditor::dragChainObject(EffectIndex effect, const juce::MouseEvent& event) {
+void AudioPluginAudioProcessorEditor::dragChainObject(const juce::MouseEvent& event) {
     this->drawMoveChainObject = true;
  
     float rectangleY      = 5.f;
@@ -290,7 +291,7 @@ void AudioPluginAudioProcessorEditor::dragChainObject(EffectIndex effect, const 
     this->computeView(this->currentSelected);
 }
  
-void AudioPluginAudioProcessorEditor::swapChainObjects(EffectIndex effect, const juce::MouseEvent& event) { 
+void AudioPluginAudioProcessorEditor::swapChainObjects(const juce::MouseEvent& event) { 
     int slotWidth  = 200;
     int firstSlotX = 10;
     int lastSlot   = (int)this->activeChain.size() - 1;

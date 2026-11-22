@@ -19,6 +19,7 @@ void AudioPluginAudioProcessorEditor::selectorInit() {
     );
 
     adderBox.onLeftClickShowEffect = [this](EffectIndex effect) {
+        juce::ignoreUnused(effect);
         this->computeView(EffectIndex::ADD);
     };
 
@@ -47,14 +48,14 @@ void AudioPluginAudioProcessorEditor::initEffectObject(juce::String name, const 
         index
     );
 
-    objectChain.onLeftClickDragEffect = [this](EffectIndex effect, const juce::MouseEvent& event) {
+    objectChain.onLeftClickDragEffect = [this](const juce::MouseEvent& event) {
         if (this->activeChain.size() == 2) {
             return ;
         }
-        this->dragChainObject(effect, event);
+        this->dragChainObject(event);
     };
-    objectChain.onLeftClickReplaceAfterDrag = [this](EffectIndex effect, const juce::MouseEvent& event) {
-        this->swapChainObjects(effect, event);
+    objectChain.onLeftClickReplaceAfterDrag = [this](const juce::MouseEvent& event) {
+        this->swapChainObjects(event);
     };
     objectChain.onLeftClickShowEffect = [this](EffectIndex effect) {
         this->computeView(effect);
