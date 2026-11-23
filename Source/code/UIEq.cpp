@@ -109,7 +109,7 @@ void AudioPluginAudioProcessorEditor::eqPaint(juce::Graphics& g) {
     int startOffsetX = width / 4 + sliderWidth / 2;
 	startOffsetY = 110;
 	int textWidth = 100;
-	int textHeight = 20;
+	int textHeight = 25;
 	
 	juce::Rectangle<int> textArea = {startX, startY, textWidth, textHeight};
 

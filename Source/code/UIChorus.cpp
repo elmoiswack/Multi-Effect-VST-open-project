@@ -48,7 +48,7 @@ void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
 	int sliderWidth = 100;
     int sliderHeight = 100;
 	int textWidth = 150;
-	int textHeight = 20;
+	int textHeight = 25;
 	int textOffestX = 25;
 
 	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
@@ -71,7 +71,7 @@ void AudioPluginAudioProcessorEditor::chorusPaint(juce::Graphics& g) {
 	textArea.setY((getLocalBounds().getHeight() / 2) + (sliderHeight / 2) - textHeight);
     g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::DEPTH)]->getName(), textArea, juce::Justification::centred, true);
 
-	textArea.setX(width / 2 + static_cast<int>(sliderWidth * 0.5) - textOffestX);
+	textArea.setX((width / 2) + static_cast<int>(sliderWidth * 0.5) - textOffestX);
     g.drawText(this->chorusSliders[static_cast<int>(ChorusIndex::WIDTH)]->getName(), textArea, juce::Justification::centred, true);
 
 	textArea.setX(width - sliderWidthOffset - sliderWidth - textOffestX);
@@ -105,7 +105,7 @@ void AudioPluginAudioProcessorEditor::chorusResized() {
 	startX = width / 2 - sliderWidthOffset;
 	startY = (getLocalBounds().getHeight() / 2) + (sliderHeight / 2);
 	this->chorusSliders[static_cast<int>(ChorusIndex::DEPTH)]->setBounds(startX, startY, sliderWidth, sliderHeight);
-	startX = width / 2 + sliderWidthOffset;
+	startX = (width / 2) + static_cast<int>(sliderWidth * 0.5);
 	this->chorusSliders[static_cast<int>(ChorusIndex::WIDTH)]->setBounds(startX, startY, sliderWidth, sliderHeight);
 
 	startX = width - sliderWidthOffset - sliderWidth;

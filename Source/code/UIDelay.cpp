@@ -88,7 +88,7 @@ void AudioPluginAudioProcessorEditor::delayPaint(juce::Graphics& g) {
 	int sliderWidth = 100;
     int sliderHeight = 100;
 	int textWidth = 100;
-	int textHeight = 20;
+	int textHeight = 25;
 
 	int sliderheightOffset = static_cast<int>(sliderHeight * 1.5);
 	int sliderWidthOffset = static_cast<int>(sliderWidth * 1.5);
