@@ -23,7 +23,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     this->drawMoveChainObject = false;
     this->currentSelected = EffectIndex::ADD;
 
-    setSize(1000, 800);
+    setSize(WindowWidth, WindowHeight);
     resized();
 }
 

@@ -7,6 +7,9 @@
 #include <vector>
 #include <algorithm>
 
+inline static constexpr int WindowWidth = 1000;
+inline static constexpr int WindowHeight = 800;
+
 struct ColorsScheme {
     inline static constexpr juce::uint8 reverbPrimary[3] = {255, 255, 100};
 	inline static constexpr juce::uint8 reverbSecondary[3] = {251, 156, 14};

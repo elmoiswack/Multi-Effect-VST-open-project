@@ -74,40 +74,37 @@ void AudioPluginAudioProcessorEditor::selectorPaint(juce::Graphics& g) {
 }
 
 void AudioPluginAudioProcessorEditor::selectorResized() {
-    auto height = getHeight();
-    auto width = getWidth();
-
     auto widthBox = 150;
     auto heigthBox = 125;
 
 	this->selectCustomEffectBox[EffectIndex::REVERB].setBounds(
-        width / 4 - (width / 8), 
-        height / 4,
+        (WindowWidth / 4) - (widthBox / 2), 
+        (WindowHeight / 4),
         widthBox,
         heigthBox);
 
-   this->selectCustomEffectBox[EffectIndex::DISTORTION].setBounds(
-        width / 4 * 3 - (width / 8), 
-        height / 4, 
-        widthBox, 
-        heigthBox);
-
     this->selectCustomEffectBox[EffectIndex::DELAY].setBounds(
-        width / 4 - (width / 8), 
-        height / 4 * 2, 
-        widthBox, 
-        heigthBox);
-
-    this->selectCustomEffectBox[EffectIndex::CHORUS].setBounds(
-        width / 4 * 3 - (width / 8), 
-        height / 4 * 2, 
+        (WindowWidth / 4) - (widthBox / 2), 
+        (WindowHeight / 2), 
         widthBox, 
         heigthBox);
 
     this->selectCustomEffectBox[EffectIndex::EQ].setBounds(
-        width / 2 - (width / 8), 
-        height / 4 * 2, 
+        (WindowWidth / 2) - (widthBox / 2), 
+        (WindowHeight / 2) - (heigthBox / 2), 
         widthBox,
+        heigthBox);
+    
+   this->selectCustomEffectBox[EffectIndex::DISTORTION].setBounds(
+        (WindowWidth / 4) * 3 - (widthBox / 2), 
+        (WindowHeight / 4), 
+        widthBox, 
+        heigthBox);
+
+    this->selectCustomEffectBox[EffectIndex::CHORUS].setBounds(
+        (WindowWidth / 4) * 3 - (widthBox / 2), 
+        (WindowHeight / 2), 
+        widthBox, 
         heigthBox);
 
     for (auto& it : this->selectCustomEffectBox) {
