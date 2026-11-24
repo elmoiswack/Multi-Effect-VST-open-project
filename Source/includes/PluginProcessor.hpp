@@ -22,7 +22,7 @@ struct BiquadState {
 };
 
 static constexpr int maxChannels = 2;
-static constexpr int maxSlopes = 4; 
+static constexpr int maxSlopes = 4;
 
 //==============================================================================
 class AudioPluginAudioProcessor final : public juce::AudioProcessor
@@ -76,6 +76,10 @@ public:
     void useEQ(float* buffer, int numSamples, int channel);
     void resetEQState();
 
+    void computeFFTBuffer(juce::AudioBuffer<float>& buffer);
+    void myFFT();
+    std::vector<float>& fetchFFTResult();
+    bool isFFTDone();
 
 private:
     //==============================================================================
@@ -90,6 +94,9 @@ private:
     BiquadState  highCutState[maxChannels][maxSlopes];
     int lowCutSlopes  = 1;
     int highCutSlopes = 1;
+    
+    std::vector<float> fftResult;
+    bool fftFinished;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)
 };

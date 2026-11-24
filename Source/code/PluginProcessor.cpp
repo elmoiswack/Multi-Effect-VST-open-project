@@ -184,6 +184,8 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
             }
         }
     }
+    
+    this->computeFFTBuffer(buffer);
 }
 
 //==============================================================================

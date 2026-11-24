@@ -69,17 +69,11 @@ void AudioPluginAudioProcessorEditor::eqHandler() {
 
 
 
-juce::Path AudioPluginAudioProcessorEditor::eqComputeWaveform() {
+juce::Path AudioPluginAudioProcessorEditor::eqComputeWaveform(juce::Rectangle<float>& waveformRect) {
 	juce::Path pathToDraw; 
 
-	//get audio inputchannels from processor
-	std::vector<std::complex<double>> result = {};
-	int numChannels = 2; //get from audio inputchannels
-
-	for (int i = 0; i < numChannels; i++) {
-		//call fft function
-	
-	}
+	//fetch fft result if ready from processor
+	//compute from result a path to fit
 
 	return pathToDraw;
 }

@@ -1,6 +1,7 @@
 #include "PluginProcessor.hpp"
 #include <cmath>
 
+
 void AudioPluginAudioProcessor::computeLowCutCoefficients(BiquadParameters& parameters, float lowFreq) {
 	float w0 = 2.f * static_cast<float>(M_PI * (lowFreq / this->currentSampleRate));
 	float cosw  = std::cos(w0);
@@ -51,9 +52,6 @@ float AudioPluginAudioProcessor::calculateOutput(float x, BiquadParameters& para
 }
 
 void AudioPluginAudioProcessor::useEQ(float* buffer, int numSamples, int channel) {
-    if (channel >= maxChannels)
-        return;
-
     for (int i = 0; i < numSamples; i++) {
         float bufferSample = buffer[i];
 
@@ -68,9 +66,46 @@ void AudioPluginAudioProcessor::useEQ(float* buffer, int numSamples, int channel
 }
 
 void AudioPluginAudioProcessor::resetEQState() {
-    for (int ch = 0; ch < maxChannels; ch++)
+    for (int channel = 0; channel < maxChannels; channel++) {
         for (int s = 0; s < maxSlopes; s++) {
-            this->lowCutState[ch][s] = BiquadState{};
-            this->highCutState[ch][s] = BiquadState{};
+            this->lowCutState[channel][s] = BiquadState{};
+            this->highCutState[channel][s] = BiquadState{};
         }
+    }
+}
+
+void AudioPluginAudioProcessor::myFFT() {
+
+
+}
+
+void AudioPluginAudioProcessor::computeFFTBuffer(juce::AudioBuffer<float>& buffer) {
+    this->fftFinished = false;
+    int numChannels = buffer.getNumChannels();
+    std::size_t numSamples = static_cast<std::size_t>(buffer.getNumSamples());
+    
+    if (numChannels == 0)
+        return ;
+
+    int channelIndex = 0;
+    std::vector<float> copyBuffer = {};
+
+    auto* channelData = buffer.getReadPointer(channelIndex);
+
+    for (std::size_t i = 0; i < numSamples; i++) 
+        copyBuffer.push_back(channelData[i]);
+    
+    if (numChannels > 1) {
+        channelIndex++;
+        channelData = buffer.getReadPointer(channelIndex);
+        
+        for (std::size_t i = 0; i < numSamples; i++) {
+            float currentSample = copyBuffer[i];
+            copyBuffer[i] = (currentSample + channelData[i]) / 2;
+        }
+    }
+
+    //convert copyBuffer to a complex<float> array
+        
+    this->fftFinished = true;
 }

@@ -73,8 +73,7 @@ public:
 
     void eqInit();
     void eqPaint(juce::Graphics& g);
-    //std::vector<std::complex<double>> myFFT(std::vector<std::complex<double>>& array);
-    juce::Path eqComputeWaveform();
+    juce::Path eqComputeWaveform(juce::Rectangle<float>& waveformRect);
     void eqResized();
     void eqHandler();
 
